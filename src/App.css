@@ -1,38 +1,97 @@
 .App {
-  text-align: center;
+    text-align: center;
 }
 
 .App-logo {
-  height: 40vmin;
-  pointer-events: none;
+    height: 40vmin;
+    pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
 }
 
 .App-link {
-  color: #61dafb;
+    color: #61dafb;
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.login-button a {
+    position: relative;
+    display: inline-block;
+    padding: 15px 30px;
+    border: 2px solid #24a2ee;
+    color: #24a2ee;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-decoration: none;
+    border-radius: 40px;
+    overflow: hidden;
+}
+
+.login-button a:hover {
+    color: #fff;
+}
+
+.login-button a span {
+    position: relative;
+    z-index: 1;
+}
+
+/* Wave effect */
+.login-button .wave {
+    position: absolute;
+    left: calc(50% - 181px / 2 - 152px);
+    top: calc(50% - 37px / 2+152.5px);
+    width: 100%;
+    height: 100%;
+    background-color: #24a2ee;
+    transition: 0.5s;
+}
+
+.login-button a:hover .wave {
+    top: 0; /* Bring the wave up on hover */
+    transform: translate(100%, -100%); /* Move the wave to the top right */
+}
+
+.login-button .wave:before {
+    content: '';
+    position: absolute;
+    top: -22px;
+    left: 0px;
+    width: 100%;
+    height: 22px;
+    background: url('assets/wave.png');
+    animation: animate 1s linear infinite;
+}
+
+@keyframes animate {
+    0% {
+        background-position-x: 0;
+    }
+    100% {
+        background-position-x: -118px;
+    }
 }
