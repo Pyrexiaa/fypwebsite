@@ -15,7 +15,7 @@ export function Layout() {
     const pageTitles: Record<string, string> = {
         '/': 'Main Page',
         '/homepage': 'Home Page',
-        '/aimodel': 'AI Model',
+        '/aimodel': 'AI Model: Trimester-Based Fetal Health Prediction & Assessment',
         '/pasthistory': 'Past History Retrieval',
         '/calculator': 'Fetal Growth Calculator',
         '/settings': 'Settings',
@@ -24,9 +24,9 @@ export function Layout() {
     const currentTitle = pageTitles[location.pathname] ?? 'Unknown Page';
 
     return (
-        <div className="flex">
+        <div className="flex min-h-screen">
             <Sidebar isExpanded={isExpanded} />
-            <div className="flex flex-col flex-1">
+            <div className="flex flex-col flex-1 overflow-auto">
                 <Header
                     toggleSidebar={toggleSidebar}
                     title={currentTitle}

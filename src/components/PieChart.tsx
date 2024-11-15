@@ -7,7 +7,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface PieChartProps {
-    percentage: string; // Percentage to display on the pie chart
+    percentage: string | null; // Percentage to display on the pie chart
     name: string; // Name to display below the chart
 }
 

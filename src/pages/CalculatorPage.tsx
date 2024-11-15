@@ -1,8 +1,74 @@
 import React, { useState } from 'react';
+import Papa, { ParseResult } from 'papaparse';
 import { BlueCard } from '../components/Card';
 import InfoIcon from '../assets/InfoIcon.svg';
 import { PieChart } from '../components/PieChart';
 import '../App.css';
+
+interface CentileData {
+    GA: number;
+    '2.5': number;
+    '5': number;
+    '10': number;
+    '25': number;
+    '50': number;
+    '75': number;
+    '90': number;
+    '95': number;
+    '97.5': number;
+}
+
+// Function to load CSV data from the public folder
+const loadCSVData = async (csv_path: string): Promise<CentileData[]> => {
+    const response = await fetch(csv_path);
+    const csv = await response.text();
+
+    return new Promise((resolve, reject) => {
+        Papa.parse(csv, {
+            header: true,
+            dynamicTyping: true,
+            complete: (result) => resolve(result.data as CentileData[]),
+            error: (error: Error) => reject(error),
+        });
+    });
+};
+
+// Function to compute centile
+const computeCentile = (ga: number, efw: number, centileData: CentileData[]): number => {
+    const row = centileData.find((data) => data.GA === Math.round(ga));
+    if (!row) return 0;
+
+    // Dynamically get centile keys, filter and sort them numerically
+    const refCentile = Object.keys(row)
+        .filter((key) => key.startsWith('P_'))
+        .sort((a, b) => parseFloat(a.split('_')[1]) - parseFloat(b.split('_')[1]));
+
+    const ranges = refCentile.map((key) => row[key as keyof CentileData]);
+
+    for (let i = 0; i < ranges.length - 1; i += 1) {
+        if (efw >= ranges[i] && efw <= ranges[i + 1]) {
+            // Calculate linear interpolation between the two centiles
+            const lowerCentile = parseFloat(refCentile[i].split('_')[1]);
+            const upperCentile = parseFloat(refCentile[i + 1].split('_')[1]);
+            const lowerRange = ranges[i];
+            const upperRange = ranges[i + 1];
+
+            const proportion = (efw - lowerRange) / (upperRange - lowerRange);
+            const interpolatedCentile = lowerCentile + proportion * (upperCentile - lowerCentile);
+
+            return Number(`${interpolatedCentile.toFixed(2)}`);
+        }
+    }
+    // If the value is outside the range, return the nearest category
+    if (efw < ranges[0]) {
+        return 0;
+    }
+    if (efw > ranges[ranges.length - 1]) {
+        return 100;
+    }
+
+    return 0;
+};
 
 export function CalculatorPage() {
     const [gestationalWeek, setGestationalWeek] = useState('');
@@ -13,18 +79,38 @@ export function CalculatorPage() {
         setGestationalWeek(e.target.value);
     };
     const handleGestationalDay = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setGestationalWeek(e.target.value);
+        setGestationalDay(e.target.value);
     };
     const handleEFW = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setGestationalWeek(e.target.value);
+        setEFW(e.target.value);
     };
-    const handleCalculation = () => {
-        if (gestationalDay === '12345') {
-            setIsSuccessful(true); // Assuming '12345' is a valid ID for testing
-        } else {
-            setIsSuccessful(false);
-        }
+
+    // Compute EFW Centile
+    const [WHOcentile, setWHOCentile] = useState<string | null>('0.00');
+    const [I21centile, setI21Centile] = useState<string | null>('0.00');
+    const [HLcentile, setHLCentile] = useState<string | null>('0.00');
+
+    const handleCalculation = async (ga_weeks: number, ga_days: number, efw: number): Promise<void> => {
+        const WHOCentileData = await loadCSVData('/centiles/WHO_EFW.csv');
+        const I21CentileData = await loadCSVData('/centiles/I21_EFW.csv');
+        console.log('I21: ', I21CentileData);
+        const HLCentileData = await loadCSVData('/centiles/HL_EFW.csv');
+        const gaWeeksTotal = ga_weeks + ga_days / 7;
+        const gaDaysTotal = ga_weeks * 7 + ga_days;
+        const WHOresult = computeCentile(gaWeeksTotal, efw, WHOCentileData);
+        const I21result = computeCentile(gaWeeksTotal, efw, I21CentileData);
+        const HLresult = computeCentile(gaWeeksTotal, efw, HLCentileData);
+        setWHOCentile((Math.round(WHOresult * 100) / 100).toFixed(2));
+        setI21Centile((Math.round(I21result * 100) / 100).toFixed(2));
+        setHLCentile((Math.round(HLresult * 100) / 100).toFixed(2));
     };
+
+    const clearInputs = () => {
+        setGestationalWeek('');
+        setGestationalDay('');
+        setEFW('');
+    };
+
     return (
         <div className="flex space-x-4">
             <div className="flex flex-col space-y-4 w-1/4">
@@ -62,25 +148,27 @@ export function CalculatorPage() {
                     />
                     <div className="flex flex-row justify-between">
                         <button
-                            onClick={handleCalculation}
+                            onClick={clearInputs}
                             className="mt-4 mr-4 bg-gray-200 text-black rounded-2xl p-2 w-full border-2 border-solid border-black login-button"
                             type="button"
                         >
                             Clear All
                         </button>
                         <button
-                            onClick={handleCalculation}
+                            onClick={() =>
+                                handleCalculation(Number(gestationalWeek), Number(gestationalDay), Number(EFW))
+                            }
                             className="mt-4 bg-blue-500 text-white rounded-2xl p-2 w-full border-2 border-solid border-black login-button"
                             type="button"
                         >
                             Confirm
                         </button>
-                        <div className="login-button">
+                        {/* <div className="login-button">
                             <a href="/login">
                                 <span>Click to Log In</span>
                                 <div className="wave" />
                             </a>
-                        </div>
+                        </div> */}
                     </div>
                     {isSuccessful === true && <p className="mt-2 text-black">Calculation successful!</p>}
                     {isSuccessful === false && <p className="mt-2 text-red-500">Error: Please try again later</p>}
@@ -88,30 +176,30 @@ export function CalculatorPage() {
             </div>
             {/* Places for the pie chart to get the percentage */}
             <div className="flex flex-row w-3/4 items-center">
-                <div className="w-1/4">
+                <div className="w-1/3">
                     <PieChart
-                        percentage="89.00"
+                        percentage={WHOcentile}
                         name="World Health Organisation Estimated Fetal Weight"
                     />
                 </div>
-                <div className="w-1/4">
+                <div className="w-1/3">
                     <PieChart
-                        percentage="89.00"
+                        percentage={HLcentile}
                         name="Hadlock Estimated Fetal Weight"
                     />
                 </div>
-                <div className="w-1/4">
+                <div className="w-1/3">
                     <PieChart
-                        percentage="89.00"
+                        percentage={I21centile}
                         name="Intergrowth-21st Estimated Fetal Weight"
                     />
                 </div>
-                <div className="w-1/4">
+                {/* <div className="w-1/4">
                     <PieChart
                         percentage="89.00"
                         name="LMS Estimated Fetal Weight"
                     />
-                </div>
+                </div> */}
             </div>
         </div>
     );

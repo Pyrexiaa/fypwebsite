@@ -12,7 +12,7 @@ export function Sidebar({ isExpanded }: SidebarProps) {
         <aside
             className={`${
                 isExpanded ? 'w-64' : 'w-0'
-            } bg-sky-950 text-white h-screen transition-width duration-300 overflow-hidden flex flex-col justify-center items-center`}
+            } bg-sky-950 text-white min-h-screen h-full transition-width duration-300 overflow-hidden flex flex-col justify-center items-center`}
         >
             {isExpanded && (
                 <div className="p-4">
