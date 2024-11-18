@@ -51,6 +51,7 @@ export function AimodelPage() {
         setGestationalWeek(e.target.value);
     };
 
+    const [submitStatus, setSubmitStatus] = useState(false);
     const [isSGA, setIsSGA] = useState(true);
 
     return (
@@ -156,38 +157,43 @@ export function AimodelPage() {
                         </Modal>
                     </BlueCard>
                 </div>
-                <AIModelContent height={combinedHeight} />
+                <AIModelContent
+                    setSubmitStatus={setSubmitStatus}
+                    height={combinedHeight}
+                />
             </div>
-            <div className="flex flex-col w-full mt-4 shadow-lg">
-                {isSGA ? (
-                    <div className="flex items-center bg-red-500 px-4 rounded-t-lg">
-                        <h1 className="text-white text-lg font-md m-2">
-                            It is predicted to be a Small-for-Gestational Age (SGA) baby.
-                        </h1>
-                    </div>
-                ) : (
-                    <div className="flex items-center bg-green-500 px-4 rounded-t-lg">
-                        <h1 className="text-white text-lg font-md m-2">
-                            It is predicted to be a Appropriate-for-Gestational Age (AGA) baby.
-                        </h1>
-                    </div>
-                )}
+            {submitStatus && (
+                <div className="flex flex-col w-full mt-4 shadow-lg">
+                    {isSGA ? (
+                        <div className="flex items-center bg-red-500 px-4 rounded-t-lg">
+                            <h1 className="text-white text-lg font-md m-2">
+                                It is predicted to be a Small-for-Gestational Age (SGA) baby.
+                            </h1>
+                        </div>
+                    ) : (
+                        <div className="flex items-center bg-green-500 px-4 rounded-t-lg">
+                            <h1 className="text-white text-lg font-md m-2">
+                                It is predicted to be a Appropriate-for-Gestational Age (AGA) baby.
+                            </h1>
+                        </div>
+                    )}
 
-                <div className="flex flex-col items-left bg-white px-4 rounded-t-lg my-4">
-                    <p className="my-2 text-black">Please Select a UA Doppler Result.</p>
-                    <input
-                        type="text"
-                        placeholder="27"
-                        value={gestationalWeek}
-                        onChange={handleGestationalWeek}
-                        className="border border-gray-300 rounded p-2 w-1/3"
-                    />
+                    <div className="flex flex-col items-left bg-white px-4 rounded-t-lg my-4">
+                        <p className="my-2 text-black">Please Select a UA Doppler Result.</p>
+                        <input
+                            type="text"
+                            placeholder="27"
+                            value={gestationalWeek}
+                            onChange={handleGestationalWeek}
+                            className="border border-gray-300 rounded p-2 w-1/3"
+                        />
+                    </div>
+                    <div className="flex flex-col items-left bg-white px-4 rounded-t-lg mb-4">
+                        <p className="my-2 text-black">Guidelines from ROCG</p>
+                        <p className="underline">Guideline 1 mentioning...</p>
+                    </div>
                 </div>
-                <div className="flex flex-col items-left bg-white px-4 rounded-t-lg mb-4">
-                    <p className="my-2 text-black">Guidelines from ROCG</p>
-                    <p className="underline">Guideline 1 mentioning...</p>
-                </div>
-            </div>
+            )}
         </div>
     );
 }

@@ -31,7 +31,7 @@ export function Layout() {
                     toggleSidebar={toggleSidebar}
                     title={currentTitle}
                 />
-                <main className="p-4">
+                <main className="flex-1 p-4 overflow-y-auto bg-gray-100">
                     <Outlet />
                 </main>
             </div>

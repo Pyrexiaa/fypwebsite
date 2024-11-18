@@ -1,24 +1,40 @@
 import React from 'react';
 import './App.css';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from './auth/firebaseConfig';
 import { Layout } from './components/Layout';
 import { LoginPage } from './pages/LoginPage';
 import { HomePage } from './pages/HomePage';
 import { CalculatorPage } from './pages/CalculatorPage';
 import { AimodelPage } from './pages/AimodelPage';
 import { PasthistoryPage } from './pages/PasthistoryPage';
+import { SettingsPage } from './pages/SettingsPage';
 
 export function App() {
+    const [user] = useAuthState(auth);
+
     return (
         <Router>
             <Routes>
                 <Route
                     path="/"
-                    element={<Layout />}
+                    element={user ? <Navigate to="/homepage" /> : <Navigate to="/login" />}
+                />
+
+                <Route
+                    path="/login"
+                    element={user ? <Navigate to="/homepage" /> : <LoginPage />}
+                />
+
+                {/* Protected Routes (with Layout) */}
+                <Route
+                    path="/"
+                    element={user ? <Layout /> : <Navigate to="/login" />}
                 >
                     <Route
                         index
-                        element={<LoginPage />} // Default content for "/"
+                        element={<Navigate to="/homepage" />} // Redirect to homepage if authenticated
                     />
                     <Route
                         path="homepage"
@@ -36,11 +52,11 @@ export function App() {
                         path="pasthistory"
                         element={<PasthistoryPage />}
                     />
+                    <Route
+                        path="/settings"
+                        element={<SettingsPage />}
+                    />
                 </Route>
-                <Route
-                    path="/settings"
-                    element={<div>Settings Page</div>}
-                />
             </Routes>
         </Router>
     );

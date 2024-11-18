@@ -163,12 +163,6 @@ export function CalculatorPage() {
                         >
                             Confirm
                         </button>
-                        {/* <div className="login-button">
-                            <a href="/login">
-                                <span>Click to Log In</span>
-                                <div className="wave" />
-                            </a>
-                        </div> */}
                     </div>
                     {isSuccessful === true && <p className="mt-2 text-black">Calculation successful!</p>}
                     {isSuccessful === false && <p className="mt-2 text-red-500">Error: Please try again later</p>}

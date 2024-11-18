@@ -4,10 +4,11 @@ import { AIModelContentTable } from './AIModelContentTable';
 import { Modal } from './Modal';
 
 interface AIModelContentProps {
+    setSubmitStatus: (bool: boolean) => void;
     height: number;
 }
 
-export function AIModelContent({ height }: AIModelContentProps) {
+export function AIModelContent({ setSubmitStatus, height }: AIModelContentProps) {
     const [isExpandModalOpen, setExpandModalOpen] = useState(false);
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
     const [formData, setFormData] = useState({});
@@ -35,6 +36,7 @@ export function AIModelContent({ height }: AIModelContentProps) {
     const handleFormSubmit = () => {
         // Placeholder for submit logic
         setIsSaved(true);
+        setSubmitStatus(true);
         setTimeout(() => {
             setCreateModalOpen(false);
             setFormData({});
