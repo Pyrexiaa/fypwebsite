@@ -58,7 +58,7 @@ export function AIModelContentTable() {
                             type="text"
                             id={key}
                             className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
-                            placeholder={`Enter ${key}`}
+                            placeholder="Enter Value"
                         />
                     </div>
                 ))}

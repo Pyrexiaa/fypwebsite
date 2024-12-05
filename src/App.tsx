@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from './auth/firebaseConfig';
 import { Layout } from './components/Layout';
+import { LoginLayout } from './components/LoginLayout';
 import { LoginPage } from './pages/LoginPage';
 import { HomePage } from './pages/HomePage';
 import { CalculatorPage } from './pages/CalculatorPage';
@@ -17,15 +18,22 @@ export function App() {
     return (
         <Router>
             <Routes>
+                {/* Redirects */}
                 <Route
                     path="/"
                     element={user ? <Navigate to="/homepage" /> : <Navigate to="/login" />}
                 />
 
+                {/* Login Route with Layout */}
                 <Route
                     path="/login"
-                    element={user ? <Navigate to="/homepage" /> : <LoginPage />}
-                />
+                    element={user ? <Navigate to="/homepage" /> : <LoginLayout />}
+                >
+                    <Route
+                        index
+                        element={<LoginPage />}
+                    />
+                </Route>
 
                 {/* Protected Routes (with Layout) */}
                 <Route

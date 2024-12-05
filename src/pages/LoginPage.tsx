@@ -6,6 +6,7 @@ import {
     signInWithPopup,
 } from 'firebase/auth';
 import { auth } from '../auth/firebaseConfig';
+import GoogleIcon from '../assets/GoogleIcon.png';
 
 export function LoginPage() {
     const [email, setEmail] = useState('');
@@ -60,41 +61,52 @@ export function LoginPage() {
     };
 
     return (
-        <div className="container mx-auto max-w-sm p-4">
-            <h1 className="text-3xl font-bold text-left mb-4">Sign In</h1>
+        <div className="container mx-auto max-w-lg p-16 bg-white rounded-lg">
+            <h1 className="text-3xl font-bold text-left">Sign In</h1>
+
+            <div className="text-left mb-4">
+                <span className="text-sm text-gray-600">or </span>
+                <a
+                    href="#create-account"
+                    onClick={() => {}}
+                    className="text-blue-500 text-sm font-semibold hover:underline"
+                >
+                    create an account
+                </a>
+            </div>
 
             <div className="mb-4">
-                <label
-                    htmlFor="email-address"
-                    className="block text-gray-700 text-sm font-bold mb-2"
-                >
-                    Email address
-                </label>
                 <input
                     type="email"
-                    id="email-address"
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email address"
                 />
             </div>
 
             <div className="mb-4">
-                <label
-                    htmlFor="password"
-                    className="block text-gray-700 text-sm font-bold mb-2"
-                >
-                    Password
-                </label>
                 <input
                     type="password"
-                    id="password"
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your password"
                 />
+            </div>
+
+            <div className="flex items-center mb-6">
+                <input
+                    type="checkbox"
+                    id="remember-me"
+                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <label
+                    htmlFor="remember-me"
+                    className="ml-2 text-sm text-gray-700"
+                >
+                    Remember me
+                </label>
             </div>
 
             <div className="flex flex-col gap-2">
@@ -106,19 +118,27 @@ export function LoginPage() {
                     Sign In
                 </button>
                 <button
-                    onClick={() => onSubmit}
-                    className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-700"
-                    type="button"
-                >
-                    Create Account
-                </button>
-                <button
                     onClick={onGoogleSignIn}
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-700"
+                    className="flex items-center justify-center bg-white hover:bg-gray-100 text-gray-700 font-bold py-2 px-4 border rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
                     type="button"
                 >
-                    Sign In with Google
+                    <img
+                        src={GoogleIcon}
+                        alt="Google Icon"
+                        className="w-5 h-5 mr-2"
+                    />
+                    Sign in with Google
                 </button>
+            </div>
+
+            <div className="mt-4 text-left">
+                <a
+                    href="#forgot-password"
+                    onClick={() => {}}
+                    className="text-blue-500 text-sm font-semibold hover:underline"
+                >
+                    Forgotten your password?
+                </a>
             </div>
         </div>
     );

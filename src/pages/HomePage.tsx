@@ -1,32 +1,38 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { WhiteCard, BlueCard } from '../components/Card';
+import FetalGrowthCalculator from '../assets/FetalGrowthCalculator.png';
+import AIModel from '../assets/AIModel.png';
+import PastHistoryRetrieval from '../assets/PastHistoryRetrieval.png';
 
 export function HomePage() {
+    const location = useLocation(); // to get the current path
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
             {/* Hero Section */}
-            <header className="text-center py-16">
+            <header className="text-center py-4">
                 <h1 className="text-4xl font-bold text-blue-900">Welcome to the Fetal Growth Platform</h1>
                 <p className="text-lg text-gray-700 mt-4">
                     Empowered by Machine Learning to Assist in Predicting SGA and AGA Babies
                 </p>
                 <button
-                    className="mt-8 px-6 py-3 bg-blue-600 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-blue-700"
+                    className="mt-4 px-6 py-3 bg-blue-600 text-white text-lg font-semibold rounded-lg shadow-lg hover:bg-blue-700"
                     onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}
                     type="button"
                 >
-                    Get Started
+                    Get To Know More
                 </button>
             </header>
 
             {/* Features Section */}
-            <section className="py-16 bg-white">
+            <section className="py-4 bg-white">
                 <h2 className="text-3xl font-bold text-center text-blue-900">Explore Our Core Features</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto mt-12 px-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto mt-4 px-4">
                     {/* Feature 1 */}
                     <div className="bg-blue-50 p-6 rounded-lg shadow-md hover:shadow-lg">
                         <img
-                            src="path_to_calculator_image.jpg" // Replace with actual image
+                            src={FetalGrowthCalculator}
                             alt="Fetal Growth Calculator"
                             className="w-full h-40 object-cover rounded"
                         />
@@ -34,37 +40,42 @@ export function HomePage() {
                         <p className="text-gray-700 mt-2">
                             Visualize growth trends by comparing estimated fetal weights across multiple guidelines.
                         </p>
+
                         <button
                             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                             type="button"
                         >
-                            Try the Calculator
+                            <Link to="/calculator">Try The Calculator</Link>
                         </button>
                     </div>
 
                     {/* Feature 2 */}
                     <div className="bg-blue-50 p-6 rounded-lg shadow-md hover:shadow-lg">
-                        <img
-                            src="path_to_ai_model_image.jpg" // Replace with actual image
-                            alt="AI Model"
-                            className="w-full h-40 object-cover rounded"
-                        />
-                        <h3 className="text-xl font-bold text-blue-900 mt-4">AI Model</h3>
-                        <p className="text-gray-700 mt-2">
-                            Use trained ML models to predict SGA and access related guidelines for reference.
-                        </p>
+                        <div className="flex-1">
+                            <img
+                                src={AIModel}
+                                alt="AI Model"
+                                className="w-full h-40 object-cover rounded"
+                            />
+                            <h3 className="text-xl font-bold text-blue-900 mt-4">AI Model</h3>
+                            <p className="text-gray-700 mt-2">
+                                Use trained machine learning models to predict SGA and access related guidelines for
+                                reference.
+                            </p>
+                        </div>
+
                         <button
                             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                             type="button"
                         >
-                            Use AI Model
+                            <Link to="/aimodel">Use AI Model</Link>
                         </button>
                     </div>
 
                     {/* Feature 3 */}
                     <div className="bg-blue-50 p-6 rounded-lg shadow-md hover:shadow-lg">
                         <img
-                            src="path_to_history_image.jpg" // Replace with actual image
+                            src={PastHistoryRetrieval}
                             alt="Past History Retrieval"
                             className="w-full h-40 object-cover rounded"
                         />
@@ -76,7 +87,7 @@ export function HomePage() {
                             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                             type="button"
                         >
-                            View Patient History
+                            <Link to="/pasthistory">View Patient History</Link>
                         </button>
                     </div>
                 </div>
