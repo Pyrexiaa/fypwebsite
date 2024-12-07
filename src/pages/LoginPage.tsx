@@ -7,42 +7,61 @@ import {
 } from 'firebase/auth';
 import { auth } from '../auth/firebaseConfig';
 import GoogleIcon from '../assets/GoogleIcon.png';
+import { Modal } from '../components/Modal';
 
 export function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [modalMessage, setModalMessage] = useState('');
+    const [showModal, setShowModal] = useState(false);
 
-    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        await createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                // Signed in
-                const { user } = userCredential;
-                console.log(user);
-                // ...
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log(errorCode, errorMessage);
-                // ..
-            });
+    const showErrorModal = (message: string) => {
+        setEmail('');
+        setPassword('');
+        setModalMessage(message);
+        setShowModal(true);
     };
 
-    const onLogin = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                // Signed in
-                const { user } = userCredential;
-                console.log(user);
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log(errorCode, errorMessage);
-            });
+    const onSignUp = async (inputEmail: string, inputPassword: string) => {
+        if (!inputEmail || !inputPassword) {
+            showErrorModal('Please enter both email and password.');
+            return;
+        }
+
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, inputEmail, inputPassword);
+            console.log('Signed up successfully:', userCredential.user);
+        } catch (error: any) {
+            if (error.code === 'auth/email-already-in-use') {
+                showErrorModal('This email is already registered. Please use a different email or log in.');
+            } else {
+                showErrorModal(error.message);
+            }
+        }
+    };
+
+    const onLogin = async (inputEmail: string, inputPassword: string) => {
+        if (!inputEmail || !inputPassword) {
+            showErrorModal('Please enter both email and password.');
+            return;
+        }
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, inputEmail, inputPassword);
+            console.log('Logged in successfully:', userCredential.user);
+        } catch (error: any) {
+            console.log(error.code);
+            if (error.code === 'auth/user-not-found') {
+                showErrorModal('Email not registered. Please create an account first.');
+            } else if (error.code === 'auth/wrong-password') {
+                showErrorModal('Incorrect email or password. Please try again.');
+            } else if (error.code === 'auth/invalid-credential') {
+                showErrorModal('Incorrect email or password, please try again');
+            } else if (error.code === 'auth/invalid-email') {
+                showErrorModal('Please enter valid email');
+            } else {
+                showErrorModal(error.message);
+            }
+        }
     };
 
     const onGoogleSignIn = async () => {
@@ -62,13 +81,21 @@ export function LoginPage() {
 
     return (
         <div className="container mx-auto max-w-lg p-16 bg-white rounded-lg">
+            {/* Modals */}
+            <Modal
+                isOpen={showModal}
+                onClose={() => setShowModal(false)}
+            >
+                <div className="flex flex-row justify-between items-center p-4">{modalMessage}</div>
+            </Modal>
+
             <h1 className="text-3xl font-bold text-left">Sign In</h1>
 
             <div className="text-left mb-4">
                 <span className="text-sm text-gray-600">or </span>
                 <a
                     href="#create-account"
-                    onClick={() => {}}
+                    onClick={() => onSignUp(email, password)}
                     className="text-blue-500 text-sm font-semibold hover:underline"
                 >
                     create an account
@@ -111,7 +138,7 @@ export function LoginPage() {
 
             <div className="flex flex-col gap-2">
                 <button
-                    onClick={() => onLogin}
+                    onClick={() => onLogin(email, password)}
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700"
                     type="button"
                 >
