@@ -17,8 +17,7 @@ export function Sidebar({ isExpanded }: SidebarProps) {
             <div className="flex flex-col h-screen justify-center items-center">
                 {isExpanded && (
                     <div className="p-4">
-                        <h2 className="text-lg font-semibold">Dr. Bla Bla</h2>
-                        <p className="text-sm text-gray-400">Administrator</p>
+                        <h2 className="text-xl font-semibold text-gray-100">Administrator</h2>
                     </div>
                 )}
                 <nav className="flex flex-col space-y-2 mt-4">
