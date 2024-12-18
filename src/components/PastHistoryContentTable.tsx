@@ -1,62 +1,138 @@
 import React, { useState, ChangeEvent } from 'react';
-import PencilIcon from '../assets/PencilIcon.png';
-import { data } from '../mockdata/PastHistoryContentTableData';
+import { PastScans } from '../interfaces/PastScan';
 
-export function PastHistoryContentTable() {
+interface PastHistoryContentTableProps {
+    data: PastScans[] | null;
+}
+
+// Mapping for column titles
+const columnTitleMap: { [key: string]: string } = {
+    ac: 'Abdominal Circumference',
+    af: 'Amniotic Fluid',
+    afi: 'Amniotic Fluid Index',
+    bpd: 'Biparietal Diameter',
+    cpr: 'Cerebroplacental Ratio',
+    efw: 'Estimated Fetal Weight',
+    fl: 'Femur Length',
+    ga: 'Gestational Age',
+    gender: 'Gender',
+    hc: 'Head Circumference',
+    id: 'ID',
+    motherId: 'Mother ID',
+    placenta_site: 'Placenta Site',
+    psv: 'Peak Systolic Velocity',
+    umb_api: 'Umbilical Artery PI',
+    ute_api: 'Uterine Artery PI',
+    ute_ari: 'Uterine Artery RI',
+};
+
+const afMapping: { [key: number]: string } = {
+    0: 'Oligohydramnios',
+    1: 'Normal',
+    2: 'Polyhydramnios',
+};
+
+const placentaMapping: { [key: number]: string } = {
+    0: 'Anterior Placenta',
+    1: 'Fundal Placenta',
+    2: 'Lateral Placenta',
+    3: 'Placenta Previa',
+    4: 'Posterior Placenta',
+};
+
+// Mapping for value transformations
+const valueMapper = (key: string, value: any): string => {
+    if (key === 'gender') {
+        return value === 0 ? 'Male' : 'Female';
+    }
+    if (key === 'af') {
+        return afMapping[value];
+    }
+    if (key === 'placenta_site') {
+        return placentaMapping[value];
+    }
+    if (typeof value === 'number') {
+        if (key === 'id' || key === 'motherId') {
+            // Use lowercase for these keys to match object keys
+            return Math.round(value).toString(); // Convert to string
+        }
+        return value.toFixed(2); // Format numbers to 4 decimal places
+    }
+
+    return String(value); // Ensure all other values are returned as strings
+};
+
+const preprocessData = (data: PastScans[] | null) => {
+    if (!data) return null;
+
+    const transformedData = data.map((item) => {
+        const transformedItem: Record<string, string | number> = {};
+        Object.entries(item).forEach(([key, value]) => {
+            transformedItem[key] = valueMapper(key, value);
+        });
+        return transformedItem;
+    });
+
+    const columnTitles = Object.keys(data[0] || {}).map((key) => columnTitleMap[key] || key);
+
+    return { transformedData, columnTitles };
+};
+
+export function PastHistoryContentTable({ data }: PastHistoryContentTableProps) {
+    // Preprocess the data
+    const preprocessed = preprocessData(data);
+
+    if (!preprocessed || preprocessed.transformedData.length === 0) {
+        return <div className="flex justify-center items-center h-full w-full text-xl">No data available</div>;
+    }
+
+    const { transformedData, columnTitles } = preprocessed;
+
+    console.log(transformedData);
+
     return (
         <table className="w-full min-w-max table-auto">
             <thead>
                 <tr>
-                    {/* Dynamically generate headers based on keys in the first object of data */}
-                    {data.length > 0 &&
-                        Object.keys(data[0]).map((key) => (
+                    {columnTitles
+                        .filter((key) => key !== 'sga' && key !== 'Mother ID')
+                        .map((title, index) => (
                             <th
-                                key={key}
+                                key={title}
                                 className="text-left px-4 py-2 capitalize"
                             >
-                                {key.replace(/([A-Z])/g, ' $1')} {/* Add spaces to camelCase */}
+                                {title}
                             </th>
                         ))}
-                    <th className="text-left px-4 py-2">Actions</th> {/* Additional Actions column */}
+                    <th className="text-left px-4 py-2">Status</th>
                 </tr>
             </thead>
             <tbody>
-                {data.map((item) => (
+                {transformedData.map((item, rowIndex) => (
                     <tr
                         key={item.id}
                         className="border-b"
                     >
-                        {/* Dynamically generate table cells based on item values */}
-                        {Object.values(item).map((value, index) => (
-                            <td
-                                key={item.id}
-                                className="px-4 py-2"
-                            >
-                                {value}
-                            </td>
-                        ))}
-                        {/* Actions column */}
+                        {Object.entries(item)
+                            .filter(([key]) => key !== 'sga' && key !== 'motherId') // Skip 'sga'
+                            .map(([key, value], colIndex) => (
+                                <td
+                                    key={`${item.id}-${item.motherId}`}
+                                    className="px-4 py-2"
+                                >
+                                    {value}
+                                </td>
+                            ))}
                         <td className="px-4 py-2 flex space-x-2">
-                            <button
-                                className="bg-green-200 p-2 rounded-md"
-                                type="button"
-                            >
-                                <img
-                                    src={PencilIcon}
-                                    alt="Edit Icon"
-                                    className="w-5 h-5"
-                                />
-                            </button>
-                            <button
-                                className="bg-red-200 p-2 rounded-md"
-                                type="button"
-                            >
-                                <img
-                                    src={PencilIcon}
-                                    alt="Delete Icon"
-                                    className="w-5 h-5"
-                                />
-                            </button>
+                            {item.sga === '0' ? (
+                                <div className="bg-green-500 rounded-md">
+                                    <p>AGA</p>
+                                </div>
+                            ) : (
+                                <div className="bg-red-500 p-2 rounded-md">
+                                    <p>SGA</p>
+                                </div>
+                            )}
                         </td>
                     </tr>
                 ))}

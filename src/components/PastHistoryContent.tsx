@@ -2,12 +2,14 @@ import React, { useState, ChangeEvent } from 'react';
 import ExpandIcon from '../assets/ExpandIcon.svg';
 import { PastHistoryContentTable } from './PastHistoryContentTable';
 import { Modal } from './Modal';
+import { PastScans } from '../interfaces/PastScan';
 
 interface PastHistoryContentProps {
+    data: PastScans[] | null;
     height: number;
 }
 
-export function PastHistoryContent({ height }: PastHistoryContentProps) {
+export function PastHistoryContent({ data, height }: PastHistoryContentProps) {
     const [isExpandModalOpen, setExpandModalOpen] = useState(false);
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
     const [formData, setFormData] = useState({});
@@ -59,7 +61,7 @@ export function PastHistoryContent({ height }: PastHistoryContentProps) {
                         type="button"
                         onClick={handleCreateNewRecord}
                     >
-                        Create New Record
+                        Edit Record
                     </button>
                     <button
                         className="p-2"
@@ -76,9 +78,10 @@ export function PastHistoryContent({ height }: PastHistoryContentProps) {
             </div>
 
             {/* Scrollable Table Section */}
-            <div className="overflow-auto w-full h-full">
-                <PastHistoryContentTable />
+            <div className="flex overflow-auto w-full h-full">
+                <PastHistoryContentTable data={data} />
             </div>
+
             <div className="flex flex-row mt-2 items-left space-x-4">
                 <div className="flex items-center space-x-2">
                     <div className="w-6 h-4 bg-green-500 rounded" />
@@ -95,8 +98,8 @@ export function PastHistoryContent({ height }: PastHistoryContentProps) {
                 isOpen={isExpandModalOpen}
                 onClose={() => setExpandModalOpen(false)}
             >
-                <div className="overflow-auto max-h-screen">
-                    <PastHistoryContentTable />
+                <div className="flex overflow-auto max-h-screen">
+                    <PastHistoryContentTable data={data} />
                 </div>
             </Modal>
 

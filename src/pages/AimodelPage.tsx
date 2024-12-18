@@ -7,19 +7,12 @@ import { CreatePatientModal } from '../components/CreateNewPatient';
 import InfoIcon from '../assets/InfoIcon.svg';
 import ExpandIcon from '../assets/ExpandIcon.svg';
 import MaleUserIcon from '../assets/MaleUserIcon.svg';
+import { getSingleMotherURL, postNewMotherURL } from '../constants';
 
 export function AimodelPage() {
     const firstCardRef = useRef<HTMLDivElement | null>(null);
     const secondCardRef = useRef<HTMLDivElement | null>(null);
     const [combinedHeight, setCombinedHeight] = useState(0);
-
-    useEffect(() => {
-        // Calculate the combined height of both BlueCard elements
-        const firstCardHeight = firstCardRef.current?.offsetHeight || 0;
-        const secondCardHeight = secondCardRef.current?.offsetHeight || 0;
-        // Since blue card has mb-2 in between, 14 pixels have to be added
-        setCombinedHeight(firstCardHeight + secondCardHeight + 14);
-    }, []);
 
     const [patientId, setPatientId] = useState('');
     const [isSuccessful, setIsSuccessful] = useState<boolean | null>(null);
@@ -33,13 +26,21 @@ export function AimodelPage() {
     const [patientHighRiskPreeclampsia, setPatientHighRiskPreeclampsia] = useState(false);
     const [patientPreviouslyFailedPregnancy, setPatientPreviouslyFailedPregnancy] = useState(false);
 
+    useEffect(() => {
+        // Calculate the combined height of both BlueCard elements
+        const firstCardHeight = firstCardRef.current?.offsetHeight || 0;
+        const secondCardHeight = secondCardRef.current?.offsetHeight || 0;
+        // Since blue card has mb-2 in between, 14 pixels have to be added
+        setCombinedHeight(firstCardHeight + secondCardHeight + 14);
+    }, [isSuccessful]);
+
     const handlePatientIDInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPatientId(e.target.value);
     };
 
     const handleRetrievePatientId = async (inputPatientID: string) => {
         try {
-            const response = await axios.get(`http://localhost:3000/scans/mother/${inputPatientID}`);
+            const response = await axios.get(`${getSingleMotherURL}/${inputPatientID}`);
             console.log('Response: ', response.data);
             setPatientAge(response.data.age);
             setPatientHeight(response.data.height);
@@ -85,7 +86,7 @@ export function AimodelPage() {
                 Smoking: patientData.doesSmoke,
             };
             console.log(newPatient);
-            const response = await axios.post('http://localhost:3000/scans/new-mother', newPatient);
+            const response = await axios.post(postNewMotherURL, newPatient);
             console.log(response);
         } catch (error) {
             console.log(error);
@@ -264,33 +265,41 @@ export function AimodelPage() {
             {submitStatus && (
                 <div className="flex flex-col w-full mt-4 shadow-lg">
                     {isSGA ? (
-                        <div className="flex items-center bg-red-500 px-4 rounded-t-lg">
-                            <h1 className="text-white text-lg font-md m-2">
-                                It is predicted to be a Small-for-Gestational Age (SGA) baby.
-                            </h1>
+                        <div>
+                            <div className="flex items-center bg-red-500 px-4 rounded-t-lg">
+                                <h1 className="text-white text-lg font-md m-2">
+                                    It is predicted to be a Small-for-Gestational Age (SGA) baby.
+                                </h1>
+                            </div>
+                            <div className="flex flex-col items-left bg-white px-4 rounded-t-lg mb-4">
+                                <p className="my-2 text-black">Guidelines from ROCG</p>
+                                <p className="underline">Fetal Growth Scan - Carry out every 2 weeks</p>
+                                <p className="underline">Umbilical Artery Doppler - Carry out every 2 weeks</p>
+                                <p className="underline">
+                                    Consider Delivery - If static growth over 3 weeks, for period more than 34 weeks
+                                </p>
+                                <p className="underline">MCA Doppler - Carry out every 2 weeks (Only after 32 weeks)</p>
+                            </div>
                         </div>
                     ) : (
-                        <div className="flex items-center bg-green-500 px-4 rounded-t-lg">
-                            <h1 className="text-white text-lg font-md m-2">
-                                It is predicted to be a Appropriate-for-Gestational Age (AGA) baby.
-                            </h1>
+                        <div>
+                            <div className="flex items-center bg-green-500 px-4 rounded-t-lg">
+                                <h1 className="text-white text-lg font-md m-2">
+                                    It is predicted to be a Appropriate-for-Gestational Age (AGA) baby.
+                                </h1>
+                            </div>
+                            <div className="flex flex-col items-left bg-white px-4 rounded-t-lg mb-4">
+                                <p className="my-2 text-black">General Advice</p>
+                                <p className="underline">Maintain balanced nutrition to support fetal development.</p>
+                                <p className="underline">
+                                    Encourage maternal hydration, appropriate physical activity and regular prenatal
+                                    care.
+                                </p>
+                                <p className="underline">Avoid smoking, alcohol, or substance use during pregnancy.</p>
+                                <p className="underline">Consult doctors immediately if there is any abnormalities.</p>
+                            </div>
                         </div>
                     )}
-
-                    {/* <div className="flex flex-col items-left bg-white px-4 rounded-t-lg my-4">
-                        <p className="my-2 text-black">Please Select a UA Doppler Result.</p>
-                        <input
-                            type="text"
-                            placeholder="27"
-                            value={gestationalWeek}
-                            onChange={handleGestationalWeek}
-                            className="border border-gray-300 rounded p-2 w-1/3"
-                        />
-                    </div> */}
-                    <div className="flex flex-col items-left bg-white px-4 rounded-t-lg mb-4">
-                        <p className="my-2 text-black">Guidelines from ROCG</p>
-                        <p className="underline">Guideline 1 mentioning...</p>
-                    </div>
                 </div>
             )}
         </div>

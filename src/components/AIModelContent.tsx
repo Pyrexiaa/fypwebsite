@@ -4,6 +4,7 @@ import ExpandIcon from '../assets/ExpandIcon.svg';
 import { AIModelContentTable } from './AIModelContentTable';
 import { Modal } from './Modal';
 import { validationRange, optionalValues } from '../validation/data';
+import { getSingleMotherURL, postNewScanURL, imputeURL, binaryClassificationURL } from '../constants';
 
 interface AIModelContentProps {
     setSubmitStatus: (bool: boolean) => void;
@@ -11,24 +12,9 @@ interface AIModelContentProps {
     height: number;
 }
 
-// TODO: Format Mapping, e.g. gender male = 0, female = 1
-const placentaMapping: Record<string, number> = {
-    'Anterior Placenta': 0,
-    'Fundal Placenta': 1,
-    'Lateral Placenta': 2,
-    'Placenta Previa': 3,
-    'Posterior Placenta': 4,
-};
-
-const afMapping: Record<string, number> = {
-    Oligohydramnios: 0,
-    Normal: 1,
-    Polyhydramnios: 2,
-};
-
 const checkMotherExists = async (motherId: string) => {
     try {
-        const response = await axios.get(`http://localhost:3000/scans/mother/${motherId}`);
+        const response = await axios.get(`${getSingleMotherURL}/${motherId}`);
         console.log('Mother details: ', response.data);
         return true;
     } catch (error) {
@@ -152,7 +138,7 @@ export function AIModelContent({ setSubmitStatus, setIsSGA, height }: AIModelCon
 
         try {
             // Impute those nan data and put it back into the dict
-            const response = await axios.post('http://127.0.0.1:5000/impute', formData);
+            const response = await axios.post(imputeURL, formData);
             console.log('Response received after imputing: ', response.data);
 
             const motherPatient = {
@@ -167,6 +153,14 @@ export function AIModelContent({ setSubmitStatus, setIsSGA, height }: AIModelCon
                 GestationalLDM: response.data['GestationalDiabetes'],
                 Smoking: response.data['Smoking'],
             };
+
+            const predictionResponse = await axios.post(binaryClassificationURL, response.data);
+            console.log('Prediction Response: ', predictionResponse.data);
+            if (predictionResponse.data === 0) {
+                setIsSGA(false);
+            } else {
+                setIsSGA(true);
+            }
 
             const scans = {
                 motherId: Number(response.data['MotherId']),
@@ -185,17 +179,10 @@ export function AIModelContent({ setSubmitStatus, setIsSGA, height }: AIModelCon
                 umb_api: Number(response.data['UmbilicalArterialPulsatilityIndex']),
                 placenta_site: response.data['PlacentaSite'],
                 af: response.data['AmnioticFluid'],
+                sga: predictionResponse.data,
             };
 
-            const predictionResponse = await axios.post('http://127.0.0.1:5000/process', response.data);
-            console.log('Prediction Response: ', predictionResponse.data);
-            if (predictionResponse.data === 0) {
-                setIsSGA(false);
-            } else {
-                setIsSGA(true);
-            }
-
-            const scansResponse = await axios.post('http://localhost:3000/scans/new-scan', scans);
+            const scansResponse = await axios.post(`${postNewScanURL}`, scans);
             console.log('Scans Response: ', scansResponse);
         } catch (error) {
             console.log('Error occurred why imputing data: ', error);

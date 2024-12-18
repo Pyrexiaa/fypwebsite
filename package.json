@@ -13,7 +13,7 @@
         "@typescript-eslint/parser": "5.62.0",
         "axios": "^1.7.9",
         "buffer": "^6.0.3",
-        "chart.js": "^4.4.6",
+        "chart.js": "^4.4.7",
         "dotenv": "^16.4.5",
         "eslint": "8.57.0",
         "eslint-config-airbnb-typescript": "^17.1.0",
