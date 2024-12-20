@@ -4,20 +4,23 @@ import { signOut } from 'firebase/auth';
 import { auth } from '../auth/firebaseConfig';
 import SettingsProfileIcon from '../assets/SettingsProfileIcon.svg';
 import SettingsGeneralIcon from '../assets/SettingsGeneralIcon.svg';
-import SettingsSecurityIcon from '../assets/SettingsSecurityIcon.svg';
 import SettingsSupportIcon from '../assets/SettingsSupportIcon.svg';
 import SettingsReferenceIcon from '../assets/SettingsReferenceIcon.svg';
 import SettingsDisclaimerIcon from '../assets/SettingsDisclaimerIcon.svg';
 import SettingsSignOutIcon from '../assets/SettingsSignOutIcon.svg';
 import { Modal } from '../components/Modal';
+import { ProfileSettingsContent } from '../components/ProfileSettingsContent';
+import { GeneralSettingsContent } from '../components/GeneralSettingsContent';
+import { SupportSettingsContent } from '../components/SupportSettingsContent';
+import { ReferenceSettingsContent } from '../components/ReferenceSettingsContent';
+import { DisclaimerSettingsContent } from '../components/DisclaimerSettingsContent';
 
 const components = {
-    profile: () => <div>Profile Settings Content</div>,
-    general: () => <div>General Settings Content</div>,
-    security: () => <div>Security Settings Content</div>,
-    support: () => <div>Support Content</div>,
-    reference: () => <div>Reference Content</div>,
-    disclaimer: () => <div>Disclaimer Content</div>,
+    profile: ProfileSettingsContent,
+    general: GeneralSettingsContent,
+    support: SupportSettingsContent,
+    reference: ReferenceSettingsContent,
+    disclaimer: DisclaimerSettingsContent,
 };
 
 export function SettingsPage() {
@@ -43,9 +46,8 @@ export function SettingsPage() {
     };
 
     const options = [
-        { id: 'profile', label: 'Profile Settings', icon: SettingsProfileIcon },
+        { id: 'profile', label: 'Profile', icon: SettingsProfileIcon },
         { id: 'general', label: 'General', icon: SettingsGeneralIcon },
-        { id: 'security', label: 'Security', icon: SettingsSecurityIcon },
         { id: 'support', label: 'Support', icon: SettingsSupportIcon },
         { id: 'reference', label: 'Reference', icon: SettingsReferenceIcon },
         { id: 'disclaimer', label: 'Disclaimer', icon: SettingsDisclaimerIcon },
@@ -112,7 +114,7 @@ export function SettingsPage() {
             </Modal>
 
             {/* Content Area */}
-            <div className="flex-1 bg-gray-50 p-6">{renderContent()}</div>
+            <div className="flex-1 bg-gray-50 rounded-md p-6 mx-4">{renderContent()}</div>
         </div>
     );
 }

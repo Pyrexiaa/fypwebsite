@@ -14,6 +14,7 @@ import { SettingsPage } from './pages/SettingsPage';
 
 export function App() {
     const [user] = useAuthState(auth);
+    console.log('User: ', user?.email);
 
     return (
         <Router>
