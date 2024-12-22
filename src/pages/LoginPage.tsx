@@ -7,7 +7,7 @@ import {
 } from 'firebase/auth';
 import { auth } from '../auth/firebaseConfig';
 import GoogleIcon from '../assets/GoogleIcon.png';
-import { Modal } from '../components/Modal';
+import { Modal } from '../modals/Modal';
 
 export function LoginPage() {
     const [email, setEmail] = useState('');

@@ -27,15 +27,26 @@ function FAQ({ question, answer }: FAQProps) {
 }
 
 const FAQDict = {
-    'How do I reset my password?': 'Click on Forgot Password on the login page and follow the instructions.',
-    'How do I contact support?': 'Email us at support@example.com for assistance.',
-    'How do I enable dark mode?': 'Go to General Settings and toggle the dark mode option.',
+    'How can I reset my password?':
+        'To reset your password, click on the "Forgot Password" link on the login page and follow the instructions provided.',
+    'How can I contact support?':
+        'For any assistance or inquiries, please email us at U2102820@siswa.edu.my. Our support team will respond promptly.',
+    'How can I enable dark mode?':
+        'Navigate to the General Settings section and toggle the "Dark Mode" option to enable or disable it.',
+    'What is the purpose of the Fetal Growth Calculator Page?':
+        'The Fetal Growth Calculator allows users to input gestational age and estimated fetal weight to determine the percentile of the weight using multiple standards (WHO, Hadlock, and Intergrowth-21st). This provides a comprehensive comparison to assess the likelihood of Small-for-Gestational Age (SGA) classification.',
+    'Why is retrieving patient ID necessary on the AI Model Page?':
+        'Retrieving the patient ID ensures that existing patient data is available. The AI model can only be utilized when the maternal ID is registered within the system.',
+    'What functionality does the AI Model Page provide?':
+        'The AI Model Page accepts both required and optional patient data, imputes missing optional information when necessary, and predicts the health status of preterm infants based on the input provided.',
+    'What does the Past History Retrieval feature do?':
+        'The Past History Retrieval feature allows users to monitor the growth and development of preterm infants and view predictions across different gestational ages for a comprehensive understanding of the baby’s progress.',
 };
 
 export function SupportSettingsContent() {
     return (
-        <div className="bg-white shadow-md p-4 rounded-lg">
-            <h2 className="text-xl font-semibold mb-4">Support</h2>
+        <div className="bg-gray-50 p-6 rounded-lg">
+            <h2 className="text-2xl font-semibold mb-6 text-center">Support</h2>
             <div className="space-y-2">
                 {Object.entries(FAQDict).map(([question, answer]) => (
                     <FAQ

@@ -21,7 +21,7 @@ export function Header({ toggleSidebar, title }: HeaderProps) {
             <div className="flex items-center">
                 <button
                     onClick={toggleSidebar}
-                    className="mr-4 p-2 bg-white rounded focus:outline-none hover:bg-gray-200"
+                    className="mr-4 p-2 rounded focus:outline-none hover:bg-white"
                     aria-label="Toggle Sidebar"
                     type="button"
                 >
@@ -34,7 +34,7 @@ export function Header({ toggleSidebar, title }: HeaderProps) {
             </div>
             <button
                 onClick={handleSettingsClick} // Call the handler on click
-                className="p-2 bg-white rounded focus:outline-none hover:bg-gray-200"
+                className="p-2 rounded focus:outline-none hover:bg-white"
                 type="button"
                 aria-label="Settings"
             >

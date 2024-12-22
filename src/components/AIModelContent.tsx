@@ -2,7 +2,7 @@ import React, { useState, ChangeEvent } from 'react';
 import axios from 'axios';
 import ExpandIcon from '../assets/ExpandIcon.svg';
 import { AIModelContentTable } from './AIModelContentTable';
-import { Modal } from './Modal';
+import { Modal } from '../modals/Modal';
 import { validationRange, optionalValues } from '../validation/data';
 import { getSingleMotherURL, postNewScanURL, imputeURL, binaryClassificationURL } from '../constants';
 

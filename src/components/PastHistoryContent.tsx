@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent } from 'react';
 import ExpandIcon from '../assets/ExpandIcon.svg';
 import { PastHistoryContentTable } from './PastHistoryContentTable';
-import { Modal } from './Modal';
+import { Modal } from '../modals/Modal';
 import { PastScans } from '../interfaces/PastScan';
 
 interface PastHistoryContentProps {

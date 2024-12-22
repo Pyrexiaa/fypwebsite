@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { BlueCard } from '../components/Card';
-import { Modal } from '../components/Modal';
+import { Modal } from '../modals/Modal';
 import { AIModelContent } from '../components/AIModelContent';
 import { CreatePatientModal } from '../components/CreateNewPatient';
 import InfoIcon from '../assets/InfoIcon.svg';

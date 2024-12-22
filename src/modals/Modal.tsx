@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ExpandIcon from '../assets/ExpandIcon.svg';
+import cross from '../assets/cross.png';
 
 interface ModalProps {
     isOpen?: boolean;
@@ -21,8 +21,8 @@ export function Modal({ isOpen, onClose, children }: ModalProps) {
                         type="button"
                     >
                         <img
-                            src={ExpandIcon}
-                            alt="Expand Icon"
+                            src={cross}
+                            alt="Cross Icon"
                         />
                     </button>
                 </div>

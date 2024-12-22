@@ -4,7 +4,7 @@ import { BlueCard } from '../components/Card';
 import InfoIcon from '../assets/InfoIcon.svg';
 import ExpandIcon from '../assets/ExpandIcon.svg';
 import MaleUserIcon from '../assets/MaleUserIcon.svg';
-import { Modal } from '../components/Modal';
+import { Modal } from '../modals/Modal';
 import { PastHistoryContent } from '../components/PastHistoryContent';
 import { PastScans } from '../interfaces/PastScan';
 import { getSingleMotherURL, getAllRelatedScansURL } from '../constants';

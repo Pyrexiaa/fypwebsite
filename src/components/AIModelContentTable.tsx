@@ -64,7 +64,7 @@ export function AIModelContentTable({ formData, setFormData }: AIModelContentTab
                     onChange={(e) => handleInputChange(e)}
                     className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
                 >
-                    <option value="">Select True/False</option>
+                    <option value="">Select</option>
                     <option value="true">True</option>
                     <option value="false">False</option>
                 </select>
@@ -79,7 +79,7 @@ export function AIModelContentTable({ formData, setFormData }: AIModelContentTab
                     onChange={(e) => handleInputChange(e)}
                     className="border border-gray-300 p-2 rounded-md focus:outline-none focus:border-blue-500"
                 >
-                    <option value="">Select {key}</option>
+                    <option value="">Select</option>
                     {dropdownFields[key as keyof typeof dropdownFields].map((option: string) => (
                         <option
                             key={option}

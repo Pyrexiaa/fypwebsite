@@ -8,7 +8,7 @@ import SettingsSupportIcon from '../assets/SettingsSupportIcon.svg';
 import SettingsReferenceIcon from '../assets/SettingsReferenceIcon.svg';
 import SettingsDisclaimerIcon from '../assets/SettingsDisclaimerIcon.svg';
 import SettingsSignOutIcon from '../assets/SettingsSignOutIcon.svg';
-import { Modal } from '../components/Modal';
+import { Modal } from '../modals/Modal';
 import { ProfileSettingsContent } from '../components/ProfileSettingsContent';
 import { GeneralSettingsContent } from '../components/GeneralSettingsContent';
 import { SupportSettingsContent } from '../components/SupportSettingsContent';
@@ -55,36 +55,40 @@ export function SettingsPage() {
 
     return (
         <div className="flex flex-row">
-            <div className="flex flex-col bg-white rounded-md shadow p-4 w-1/4">
-                {options.map((option) => (
-                    <button
-                        key={option.id}
-                        onClick={() => setSelected(option.id)}
-                        className={`flex flex-row items-center m-2 px-4 py-2 cursor-pointer rounded-md transition-colors 
+            <div className="flex flex-col bg-white rounded-md shadow p-4 w-1/4 justify-between">
+                <div className="flex flex-col">
+                    {options.map((option) => (
+                        <button
+                            key={option.id}
+                            onClick={() => setSelected(option.id)}
+                            className={`flex flex-row items-center m-2 px-4 py-2 cursor-pointer rounded-md transition-colors 
                             ${selected === option.id ? 'bg-blue-100 font-bold' : 'hover:bg-gray-100 hover:font-bold'}`}
+                            type="button"
+                        >
+                            <img
+                                src={option.icon}
+                                alt={`${option.label} Icon`}
+                                className="mr-2"
+                            />
+                            <p>{option.label}</p>
+                        </button>
+                    ))}
+                </div>
+                <div className="flex flex-col">
+                    <hr className="my-2 border-gray-300" />
+                    <button
+                        onClick={() => setIsModalVisible(true)}
+                        className="flex flex-row items-center m-2 px-4 py-2 cursor-pointer rounded-md transition-colors hover:bg-gray-100 hover:text-blue-500"
                         type="button"
                     >
                         <img
-                            src={option.icon}
-                            alt={`${option.label} Icon`}
+                            src={SettingsSignOutIcon}
+                            alt="Sign Out Icon"
                             className="mr-2"
                         />
-                        <p>{option.label}</p>
+                        <p className="text-left">Logout</p>
                     </button>
-                ))}
-                <hr className="my-2 border-gray-300" />
-                <button
-                    onClick={() => setIsModalVisible(true)}
-                    className="flex flex-row items-center m-2 px-4 py-2 cursor-pointer rounded-md transition-colors hover:bg-gray-100 hover:text-blue-500"
-                    type="button"
-                >
-                    <img
-                        src={SettingsSignOutIcon}
-                        alt="Sign Out Icon"
-                        className="mr-2"
-                    />
-                    <p className="text-left">Logout</p>
-                </button>
+                </div>
             </div>
 
             <Modal
@@ -114,7 +118,7 @@ export function SettingsPage() {
             </Modal>
 
             {/* Content Area */}
-            <div className="flex-1 bg-gray-50 rounded-md p-6 mx-4">{renderContent()}</div>
+            <div className="flex-1 bg-gray-50 rounded-md p-6 mx-4 w-3/4">{renderContent()}</div>
         </div>
     );
 }
