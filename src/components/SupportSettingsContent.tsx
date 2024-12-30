@@ -28,11 +28,9 @@ function FAQ({ question, answer }: FAQProps) {
 
 const FAQDict = {
     'How can I reset my password?':
-        'To reset your password, click on the "Forgot Password" link on the login page and follow the instructions provided.',
+        'To reset your password, click on the "Profile" tab on the settings page and follow the instructions provided.',
     'How can I contact support?':
-        'For any assistance or inquiries, please email us at U2102820@siswa.edu.my. Our support team will respond promptly.',
-    'How can I enable dark mode?':
-        'Navigate to the General Settings section and toggle the "Dark Mode" option to enable or disable it.',
+        'For any assistance or inquiries, please contact U2102820@siswa.edu.my. Our support team will respond promptly.',
     'What is the purpose of the Fetal Growth Calculator Page?':
         'The Fetal Growth Calculator allows users to input gestational age and estimated fetal weight to determine the percentile of the weight using multiple standards (WHO, Hadlock, and Intergrowth-21st). This provides a comprehensive comparison to assess the likelihood of Small-for-Gestational Age (SGA) classification.',
     'Why is retrieving patient ID necessary on the AI Model Page?':

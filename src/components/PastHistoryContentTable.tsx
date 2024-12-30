@@ -24,6 +24,8 @@ const columnTitleMap: { [key: string]: string } = {
     umb_api: 'Umbilical Artery PI',
     ute_api: 'Uterine Artery PI',
     ute_ari: 'Uterine Artery RI',
+    createdAt: 'Result Date',
+    name: 'Name',
 };
 
 const afMapping: { [key: number]: string } = {
@@ -78,6 +80,19 @@ const preprocessData = (data: PastScans[] | null) => {
     return { transformedData, columnTitles };
 };
 
+const formatDate = (isoString: string | number) => {
+    console.log('ISO String: ', isoString);
+    const date = new Date(isoString);
+    return date.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+    });
+};
+
 export function PastHistoryContentTable({ data }: PastHistoryContentTableProps) {
     // Preprocess the data
     const preprocessed = preprocessData(data);
@@ -95,7 +110,7 @@ export function PastHistoryContentTable({ data }: PastHistoryContentTableProps) 
             <thead>
                 <tr>
                     {columnTitles
-                        .filter((key) => key !== 'sga' && key !== 'Mother ID')
+                        .filter((key) => key !== 'sga' && key !== 'Mother ID' && key !== 'Result Date')
                         .map((title, index) => (
                             <th
                                 key={title}
@@ -105,6 +120,7 @@ export function PastHistoryContentTable({ data }: PastHistoryContentTableProps) 
                             </th>
                         ))}
                     <th className="text-left px-4 py-2">Status</th>
+                    <th className="text-left px-4 py-2">Result Date</th>
                 </tr>
             </thead>
             <tbody>
@@ -114,26 +130,23 @@ export function PastHistoryContentTable({ data }: PastHistoryContentTableProps) 
                         className="border-b"
                     >
                         {Object.entries(item)
-                            .filter(([key]) => key !== 'sga' && key !== 'motherId') // Skip 'sga'
+                            .filter(([key]) => key !== 'sga' && key !== 'motherId' && key !== 'createdAt') // Skip 'sga'
                             .map(([key, value], colIndex) => (
                                 <td
                                     key={`${item.id}-${item.motherId}`}
-                                    className="px-4 py-2"
+                                    className="px-4 py-2 align-top"
                                 >
                                     {value}
                                 </td>
                             ))}
-                        <td className="px-4 py-2 flex space-x-2">
+                        <td className="px-4 py-2 align-top">
                             {item.sga === '0' ? (
-                                <div className="bg-green-500 rounded-md">
-                                    <p>AGA</p>
-                                </div>
+                                <div className="bg-green-500 rounded-md text-center">AGA</div>
                             ) : (
-                                <div className="bg-red-500 p-2 rounded-md">
-                                    <p>SGA</p>
-                                </div>
+                                <div className="bg-red-500 rounded-md text-center">SGA</div>
                             )}
                         </td>
+                        <td className="px-4 py-2 align-top">{formatDate(item.createdAt)}</td>
                     </tr>
                 ))}
             </tbody>

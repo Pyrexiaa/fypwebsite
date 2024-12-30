@@ -12,6 +12,7 @@ export function CreatePatientModal({ isOpen, onClose, onSave }: CreatePatientMod
         age: '',
         height: '',
         weight: '',
+        hospital: '',
         doesSmoke: false,
         gestationalLDM: false,
         pregestationalLDM: false,
@@ -67,6 +68,24 @@ export function CreatePatientModal({ isOpen, onClose, onSave }: CreatePatientMod
                             />
                         </div>
                     ))}
+                    <div
+                        key="hospital"
+                        className="flex flex-col col-span-1 md:col-span-2"
+                    >
+                        <label
+                            htmlFor="hospital"
+                            className="text-sm font-semibold mb-1"
+                        >
+                            Hospital Name
+                        </label>
+                        <input
+                            type="string"
+                            name="hospital"
+                            value={formData['hospital' as keyof typeof formData] as string}
+                            onChange={handleChange}
+                            className="border border-gray-300 rounded p-2"
+                        />
+                    </div>
                     {[
                         { label: 'Does she smoke?', name: 'doesSmoke' },
                         { label: 'Does she have gestational LDM?', name: 'gestationalLDM' },

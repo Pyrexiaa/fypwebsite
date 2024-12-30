@@ -19,6 +19,7 @@ export function AimodelPage() {
     const [patientAge, setPatientAge] = useState('');
     const [patientHeight, setPatientHeight] = useState('');
     const [patientWeight, setPatientWeight] = useState('');
+    const [patientHospital, setPatientHospital] = useState('');
     const [patientSmoking, setPatientSmoking] = useState(false);
     const [patientPregestationalLDM, setPatientPregestationalLDM] = useState(false);
     const [patientGestationalLDM, setPatientGestationalLDM] = useState(false);
@@ -45,6 +46,7 @@ export function AimodelPage() {
             setPatientAge(response.data.age);
             setPatientHeight(response.data.height);
             setPatientWeight(response.data.weight);
+            setPatientHospital(response.data.hospital);
             setPatientSmoking(response.data.Smoking);
             setPatientPregestationalLDM(response.data.PregestationalLDM);
             setPatientGestationalLDM(response.data.GestationalLDM);
@@ -62,11 +64,8 @@ export function AimodelPage() {
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
-    const [gestationalWeek, setGestationalWeek] = useState('');
-    const handleGestationalWeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setGestationalWeek(e.target.value);
-    };
-
+    const [loading, setLoading] = useState(false);
+    const [errorOccurred, setErrorOccurred] = useState(false);
     const [submitStatus, setSubmitStatus] = useState(false);
     const [isSGA, setIsSGA] = useState(true);
 
@@ -78,6 +77,7 @@ export function AimodelPage() {
                 age: Number(patientData.age),
                 height: Number(patientData.height),
                 weight: Number(patientData.weight),
+                hospital: patientData.hospital,
                 PreviouslyFailedPregnancy: patientData.failedPregnancyCount,
                 HighRiskPreeclampsia: patientData.highRiskPreeclampsia,
                 PregnancyInducedHypertension: patientData.pregnancyHypertension,
@@ -93,6 +93,70 @@ export function AimodelPage() {
         }
     };
 
+    const resultRow = () => {
+        if (loading) {
+            return (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="text-white text-lg">Processing...</div>
+                </div>
+            );
+        }
+
+        if (errorOccurred) {
+            return (
+                <div className="flex flex-col w-full mt-4 shadow-lg">
+                    <div className="flex items-center bg-red-500 px-4 rounded-lg">
+                        <h1 className="text-white text-lg font-md m-2">An error occurred. Please try again.</h1>
+                    </div>
+                </div>
+            );
+        }
+
+        if (!errorOccurred && submitStatus) {
+            return (
+                <div className="flex flex-col w-full mt-4 shadow-lg">
+                    {isSGA ? (
+                        <div>
+                            <div className="flex items-center bg-red-500 px-4 rounded-t-lg">
+                                <h1 className="text-white text-lg font-md m-2">
+                                    It is predicted to be a Small-for-Gestational Age (SGA) baby.
+                                </h1>
+                            </div>
+                            <div className="flex flex-col items-left bg-white px-4 rounded-t-lg mb-4">
+                                <p className="my-2 text-black">Guidelines from ROCG</p>
+                                <p className="underline">Fetal Growth Scan - Carry out every 2 weeks</p>
+                                <p className="underline">Umbilical Artery Doppler - Carry out every 2 weeks</p>
+                                <p className="underline">
+                                    Consider Delivery - If static growth over 3 weeks, for period more than 34 weeks
+                                </p>
+                                <p className="underline">MCA Doppler - Carry out every 2 weeks (Only after 32 weeks)</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <div>
+                            <div className="flex items-center bg-green-500 px-4 rounded-t-lg">
+                                <h1 className="text-white text-lg font-md m-2">
+                                    It is predicted to be an Appropriate-for-Gestational Age (AGA) baby.
+                                </h1>
+                            </div>
+                            <div className="flex flex-col items-left bg-white px-4 rounded-t-lg mb-4">
+                                <p className="my-2 text-black">General Advice</p>
+                                <p className="underline">Maintain balanced nutrition to support fetal development.</p>
+                                <p className="underline">
+                                    Encourage maternal hydration, appropriate physical activity, and regular prenatal
+                                    care.
+                                </p>
+                                <p className="underline">Avoid smoking, alcohol, or substance use during pregnancy.</p>
+                                <p className="underline">Consult doctors immediately if there are any abnormalities.</p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        return null;
+    };
     return (
         <div className="flex flex-col">
             <div className="flex flex-row w-full">
@@ -181,6 +245,9 @@ export function AimodelPage() {
                                 <p className="flex text-gray-700 justify-between">
                                     Weight (kg): <span className="font-semibold">{patientWeight}</span>
                                 </p>
+                                <p className="flex text-gray-700 justify-between">
+                                    Hospital: <span className="font-semibold">{patientHospital}</span>
+                                </p>
                             </div>
 
                             <Modal
@@ -252,56 +319,22 @@ export function AimodelPage() {
                                 <p className="flex text-gray-700 justify-between">
                                     Weight (kg): <span className="font-semibold">Unknown</span>
                                 </p>
+                                <p className="flex text-gray-700 justify-between">
+                                    Hospital: <span className="font-semibold">Unknown</span>
+                                </p>
                             </div>
                         </BlueCard>
                     )}
                 </div>
                 <AIModelContent
+                    setLoading={setLoading}
+                    setErrorOccurred={setErrorOccurred}
                     setSubmitStatus={setSubmitStatus}
                     setIsSGA={setIsSGA}
                     height={combinedHeight}
                 />
             </div>
-            {submitStatus && (
-                <div className="flex flex-col w-full mt-4 shadow-lg">
-                    {isSGA ? (
-                        <div>
-                            <div className="flex items-center bg-red-500 px-4 rounded-t-lg">
-                                <h1 className="text-white text-lg font-md m-2">
-                                    It is predicted to be a Small-for-Gestational Age (SGA) baby.
-                                </h1>
-                            </div>
-                            <div className="flex flex-col items-left bg-white px-4 rounded-t-lg mb-4">
-                                <p className="my-2 text-black">Guidelines from ROCG</p>
-                                <p className="underline">Fetal Growth Scan - Carry out every 2 weeks</p>
-                                <p className="underline">Umbilical Artery Doppler - Carry out every 2 weeks</p>
-                                <p className="underline">
-                                    Consider Delivery - If static growth over 3 weeks, for period more than 34 weeks
-                                </p>
-                                <p className="underline">MCA Doppler - Carry out every 2 weeks (Only after 32 weeks)</p>
-                            </div>
-                        </div>
-                    ) : (
-                        <div>
-                            <div className="flex items-center bg-green-500 px-4 rounded-t-lg">
-                                <h1 className="text-white text-lg font-md m-2">
-                                    It is predicted to be a Appropriate-for-Gestational Age (AGA) baby.
-                                </h1>
-                            </div>
-                            <div className="flex flex-col items-left bg-white px-4 rounded-t-lg mb-4">
-                                <p className="my-2 text-black">General Advice</p>
-                                <p className="underline">Maintain balanced nutrition to support fetal development.</p>
-                                <p className="underline">
-                                    Encourage maternal hydration, appropriate physical activity and regular prenatal
-                                    care.
-                                </p>
-                                <p className="underline">Avoid smoking, alcohol, or substance use during pregnancy.</p>
-                                <p className="underline">Consult doctors immediately if there is any abnormalities.</p>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            )}
+            {resultRow()}
         </div>
     );
 }

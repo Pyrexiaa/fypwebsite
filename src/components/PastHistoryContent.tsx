@@ -15,7 +15,7 @@ export function PastHistoryContent({ data, height }: PastHistoryContentProps) {
     const [formData, setFormData] = useState({});
     const [isSaved, setIsSaved] = useState(false);
 
-    const handleCreateNewRecord = () => setCreateModalOpen(true);
+    // const handleCreateNewRecord = () => setCreateModalOpen(true);
     const handleExpandTable = () => setExpandModalOpen(true);
 
     const handleCloseCreateModal = () => {
@@ -56,13 +56,6 @@ export function PastHistoryContent({ data, height }: PastHistoryContentProps) {
 
                 {/* Button and Icons */}
                 <div className="flex items-center space-x-2">
-                    <button
-                        className="bg-blue-500 text-white rounded-md px-4 py-2"
-                        type="button"
-                        onClick={handleCreateNewRecord}
-                    >
-                        Edit Record
-                    </button>
                     <button
                         className="p-2"
                         type="button"

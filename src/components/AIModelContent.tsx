@@ -7,6 +7,8 @@ import { validationRange, optionalValues } from '../validation/data';
 import { getSingleMotherURL, postNewScanURL, imputeURL, binaryClassificationURL } from '../constants';
 
 interface AIModelContentProps {
+    setLoading: (bool: boolean) => void;
+    setErrorOccurred: (bool: boolean) => void;
     setSubmitStatus: (bool: boolean) => void;
     setIsSGA: (bool: boolean) => void;
     height: number;
@@ -53,7 +55,13 @@ const validateFeatureInRange = (
     return true;
 };
 
-export function AIModelContent({ setSubmitStatus, setIsSGA, height }: AIModelContentProps) {
+export function AIModelContent({
+    setLoading,
+    setErrorOccurred,
+    setSubmitStatus,
+    setIsSGA,
+    height,
+}: AIModelContentProps) {
     const [isExpandModalOpen, setExpandModalOpen] = useState(false);
     const [isCreateModalOpen, setCreateModalOpen] = useState(false);
     const [checkMotherModal, setCheckMotherModal] = useState(false);
@@ -82,61 +90,67 @@ export function AIModelContent({ setSubmitStatus, setIsSGA, height }: AIModelCon
     };
 
     const handleFormSubmit = async () => {
-        // Placeholder for submit logic
-        setIsSaved(true);
-        setSubmitStatus(true);
-
-        // Validation Check, if mother exists
-        if ((await checkMotherExists(formData['MotherId'])) === false) {
-            // Show mother not existing, please create a new one
-            setCheckMotherModal(true);
-            setTimeout(() => {
-                setCheckMotherModal(false);
-            }, 3000);
-            return;
-        }
-
-        // Validation Check, ensure required fields are filled in
-        const requiredFields = [
-            'MotherId',
-            'MaternalAge',
-            'Gender',
-            'EstimatedFetalWeight',
-            'FemurLength',
-            'GestationalAge',
-            'HeadCircumference',
-            'AbdominalCircumference',
-        ];
-        if (validateFormData(formData, requiredFields) === false) {
-            setCheckRequiredFieldModal(true);
-            setTimeout(() => {
-                setCheckRequiredFieldModal(false);
-            }, 5000);
-            return;
-        }
-
-        // Validation Check, ensure the entered amount is in logical range
-        let validation = true;
-        Object.entries(validationRange).forEach(([key, [label, min, max]]) => {
-            if (!validateFeatureInRange(formData, key, Number(min), Number(max))) {
-                validation = false;
-                setValueError(label.toString());
-                setCheckValueErrorModal(true);
-
-                // Use a timeout to close the modal after 3 seconds
-                setTimeout(() => {
-                    setCheckValueErrorModal(false);
-                }, 3000);
-            }
-        });
-
-        if (!validation) {
-            return;
-        }
-
-        console.log('Finalized: ', formData);
+        // Start loading
+        setLoading(true);
 
         try {
+            // Placeholder for submit logic
+            setIsSaved(true);
+            setSubmitStatus(true);
+
+            // Validation Check, if mother exists
+            if ((await checkMotherExists(formData['MotherId'])) === false) {
+                // Show mother not existing, please create a new one
+                setCheckMotherModal(true);
+                setTimeout(() => {
+                    setCheckMotherModal(false);
+                }, 3000);
+                setErrorOccurred(true);
+                return;
+            }
+
+            // Validation Check, ensure required fields are filled in
+            const requiredFields = [
+                'MotherId',
+                'MaternalAge',
+                'Gender',
+                'EstimatedFetalWeight',
+                'FemurLength',
+                'GestationalAge',
+                'HeadCircumference',
+                'AbdominalCircumference',
+            ];
+            if (validateFormData(formData, requiredFields) === false) {
+                setCheckRequiredFieldModal(true);
+                setTimeout(() => {
+                    setCheckRequiredFieldModal(false);
+                }, 5000);
+                setErrorOccurred(true);
+                return;
+            }
+
+            // Validation Check, ensure the entered amount is in logical range
+            let validation = true;
+            Object.entries(validationRange).forEach(([key, [label, min, max]]) => {
+                if (!validateFeatureInRange(formData, key, Number(min), Number(max))) {
+                    validation = false;
+                    setValueError(label.toString());
+                    setCheckValueErrorModal(true);
+
+                    // Use a timeout to close the modal after 3 seconds
+                    setTimeout(() => {
+                        setCheckValueErrorModal(false);
+                    }, 3000);
+                }
+            });
+
+            if (!validation) {
+                setErrorOccurred(true);
+                return;
+            }
+
+            console.log('Finalized: ', formData);
+
             // Impute those nan data and put it back into the dict
             const response = await axios.post(imputeURL, formData);
             console.log('Response received after imputing: ', response.data);
@@ -185,7 +199,10 @@ export function AIModelContent({ setSubmitStatus, setIsSGA, height }: AIModelCon
             const scansResponse = await axios.post(`${postNewScanURL}`, scans);
             console.log('Scans Response: ', scansResponse);
         } catch (error) {
+            setErrorOccurred(true);
             console.log('Error occurred why imputing data: ', error);
+        } finally {
+            setLoading(false);
         }
     };
 

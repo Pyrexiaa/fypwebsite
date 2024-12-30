@@ -7,7 +7,8 @@ import MaleUserIcon from '../assets/MaleUserIcon.svg';
 import { Modal } from '../modals/Modal';
 import { PastHistoryContent } from '../components/PastHistoryContent';
 import { PastScans } from '../interfaces/PastScan';
-import { getSingleMotherURL, getAllRelatedScansURL } from '../constants';
+import { getSingleMotherURL, getAllRelatedScansURL, postNewMotherURL, updateMotherURL } from '../constants';
+import { CreatePatientModal } from '../components/CreateNewPatient';
 
 export function PasthistoryPage() {
     const firstCardRef = useRef<HTMLDivElement | null>(null);
@@ -16,15 +17,30 @@ export function PasthistoryPage() {
 
     const [patientId, setPatientId] = useState('');
     const [isSuccessful, setIsSuccessful] = useState<boolean | null>(null);
+
+    const [patientName, setPatientName] = useState('');
     const [patientAge, setPatientAge] = useState('');
     const [patientHeight, setPatientHeight] = useState('');
     const [patientWeight, setPatientWeight] = useState('');
+    const [patientHospital, setPatientHospital] = useState('');
     const [patientSmoking, setPatientSmoking] = useState(false);
     const [patientPregestationalLDM, setPatientPregestationalLDM] = useState(false);
     const [patientGestationalLDM, setPatientGestationalLDM] = useState(false);
     const [patientPregnancyInducedHypertension, setPatientPregnancyInducedHypertension] = useState(false);
     const [patientHighRiskPreeclampsia, setPatientHighRiskPreeclampsia] = useState(false);
     const [patientPreviouslyFailedPregnancy, setPatientPreviouslyFailedPregnancy] = useState(false);
+
+    const [editedPatientName, setEditedPatientName] = useState('');
+    const [editedPatientAge, setEditedPatientAge] = useState('');
+    const [editedPatientHeight, setEditedPatientHeight] = useState('');
+    const [editedPatientWeight, setEditedPatientWeight] = useState('');
+    const [editedPatientHospital, setEditedPatientHospital] = useState('');
+    const [editedPatientSmoking, setEditedPatientSmoking] = useState(false);
+    const [editedPatientPregestationalLDM, setEditedPatientPregestationalLDM] = useState(false);
+    const [editedPatientGestationalLDM, setEditedPatientGestationalLDM] = useState(false);
+    const [editedPatientPregnancyInducedHypertension, setEditedPatientPregnancyInducedHypertension] = useState(false);
+    const [editedPatientHighRiskPreeclampsia, setEditedPatientHighRiskPreeclampsia] = useState(false);
+    const [editedPatientPreviouslyFailedPregnancy, setEditedPatientPreviouslyFailedPregnancy] = useState(false);
 
     const [isRetrieveScanSuccessful, setIsRetrieveScanSuccessful] = useState<boolean | null>(null);
     const [patientPastScans, setPatientPastScans] = useState<PastScans[] | null>(null);
@@ -44,15 +60,29 @@ export function PasthistoryPage() {
     const retrieveMotherDetails = async (id: string) => {
         try {
             const response = await axios.get(`${getSingleMotherURL}/${id}`);
+            setPatientName(response.data.name);
             setPatientAge(response.data.age);
             setPatientHeight(response.data.height);
             setPatientWeight(response.data.weight);
+            setPatientHospital(response.data.hospital);
             setPatientSmoking(response.data.Smoking);
             setPatientPregestationalLDM(response.data.PregestationalLDM);
             setPatientGestationalLDM(response.data.GestationalLDM);
             setPatientPregnancyInducedHypertension(response.data.PregnancyInducedHypertension);
             setPatientHighRiskPreeclampsia(response.data.HighRiskPreeclampsia);
             setPatientPreviouslyFailedPregnancy(response.data.PreviouslyFailedPregnancy);
+            // Save a copy for editing and comparison later
+            setEditedPatientName(response.data.name);
+            setEditedPatientAge(response.data.age);
+            setEditedPatientHeight(response.data.height);
+            setEditedPatientWeight(response.data.weight);
+            setEditedPatientHospital(response.data.hospital);
+            setEditedPatientSmoking(response.data.Smoking);
+            setEditedPatientPregestationalLDM(response.data.PregestationalLDM);
+            setEditedPatientGestationalLDM(response.data.GestationalLDM);
+            setEditedPatientPregnancyInducedHypertension(response.data.PregnancyInducedHypertension);
+            setEditedPatientHighRiskPreeclampsia(response.data.HighRiskPreeclampsia);
+            setEditedPatientPreviouslyFailedPregnancy(response.data.PreviouslyFailedPregnancy);
             setIsSuccessful(true);
         } catch (error) {
             console.log('Response error: ', error);
@@ -63,6 +93,7 @@ export function PasthistoryPage() {
     const retrieveScansDetails = async (id: string) => {
         try {
             const response = await axios.get(`${getAllRelatedScansURL}/${id}`);
+            console.log('Patient Scan: ', response.data);
             setPatientPastScans(response.data);
             setIsRetrieveScanSuccessful(true);
         } catch (error) {
@@ -80,6 +111,142 @@ export function PasthistoryPage() {
 
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false);
+
+    const handleSaveNewPatient = async (patientData: Record<string, any>) => {
+        console.log('New Patient Data:', patientData);
+        // Save the new patient data (e.g., API call or update state)
+        try {
+            const newPatient = {
+                age: Number(patientData.age),
+                height: Number(patientData.height),
+                weight: Number(patientData.weight),
+                hospital: patientData.hospital,
+                PreviouslyFailedPregnancy: patientData.failedPregnancyCount,
+                HighRiskPreeclampsia: patientData.highRiskPreeclampsia,
+                PregnancyInducedHypertension: patientData.pregnancyHypertension,
+                PregestationalLDM: patientData.pregestationalLDM,
+                GestationalLDM: patientData.gestationalLDM,
+                Smoking: patientData.doesSmoke,
+            };
+            console.log(newPatient);
+            const response = await axios.post(postNewMotherURL, newPatient);
+            console.log(response);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const [isEditableModalOpen, setIsEditableModalOpen] = useState(false);
+    const openEditableModal = () => setIsEditableModalOpen(true);
+    const closeEditableModal = () => setIsEditableModalOpen(false);
+
+    const updateMotherRecords = async () => {
+        try {
+            // Initialize an array to hold the update payloads
+            const updatedRecords = [];
+
+            if (patientName !== editedPatientName) {
+                updatedRecords.push({
+                    motherId: patientId,
+                    columnName: 'name',
+                    newValue: editedPatientName,
+                });
+            }
+
+            if (Number(patientAge) !== Number(editedPatientAge)) {
+                updatedRecords.push({
+                    motherId: patientId,
+                    columnName: 'age',
+                    newValue: editedPatientAge,
+                });
+            }
+
+            if (Number(patientHeight) !== Number(editedPatientHeight)) {
+                updatedRecords.push({
+                    motherId: patientId,
+                    columnName: 'height',
+                    newValue: editedPatientHeight,
+                });
+            }
+
+            if (Number(patientWeight) !== Number(editedPatientWeight)) {
+                updatedRecords.push({
+                    motherId: patientId,
+                    columnName: 'weight',
+                    newValue: editedPatientWeight,
+                });
+            }
+
+            if (patientHospital !== editedPatientHospital) {
+                updatedRecords.push({
+                    motherId: patientId,
+                    columnName: 'hospital',
+                    newValue: editedPatientWeight,
+                });
+            }
+
+            if (Boolean(patientSmoking) !== Boolean(editedPatientSmoking)) {
+                updatedRecords.push({
+                    motherId: patientId,
+                    columnName: 'Smoking',
+                    newValue: editedPatientSmoking,
+                });
+            }
+
+            if (Boolean(patientPregestationalLDM) !== Boolean(editedPatientPregestationalLDM)) {
+                updatedRecords.push({
+                    motherId: patientId,
+                    columnName: 'PregestationalLDM',
+                    newValue: editedPatientPregestationalLDM,
+                });
+            }
+
+            if (Boolean(patientGestationalLDM) !== Boolean(editedPatientGestationalLDM)) {
+                updatedRecords.push({
+                    motherId: patientId,
+                    columnName: 'GestationalLDM',
+                    newValue: editedPatientGestationalLDM,
+                });
+            }
+
+            if (Boolean(patientPregnancyInducedHypertension) !== Boolean(editedPatientPregnancyInducedHypertension)) {
+                updatedRecords.push({
+                    motherId: patientId,
+                    columnName: 'PregnancyInducedHypertension',
+                    newValue: editedPatientPregnancyInducedHypertension,
+                });
+            }
+
+            if (Boolean(patientHighRiskPreeclampsia) !== Boolean(editedPatientHighRiskPreeclampsia)) {
+                updatedRecords.push({
+                    motherId: patientId,
+                    columnName: 'HighRiskPreeclampsia',
+                    newValue: editedPatientHighRiskPreeclampsia,
+                });
+            }
+
+            if (Boolean(patientPreviouslyFailedPregnancy) !== Boolean(editedPatientPreviouslyFailedPregnancy)) {
+                updatedRecords.push({
+                    motherId: patientId,
+                    columnName: 'PreviouslyFailedPregnancy',
+                    newValue: editedPatientPreviouslyFailedPregnancy,
+                });
+            }
+
+            // If there are any changes, send the update requests in parallel using Promise.all
+            if (updatedRecords.length > 0) {
+                const responses = await Promise.all(
+                    updatedRecords.map((record) => axios.patch(updateMotherURL, record)),
+                );
+                // Log all responses
+                responses.forEach((response) => console.log(response));
+            } else {
+                console.log('No changes detected.');
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     return (
         <div className="flex space-x-4">
@@ -99,17 +266,42 @@ export function PasthistoryPage() {
                         onChange={handleInputChange}
                         className="border border-gray-300 rounded p-2 w-full"
                     />
-                    <button
-                        onClick={handleRetrievePatientId}
-                        className="mt-4 bg-blue-500 text-white rounded p-2 w-full"
-                        type="button"
-                    >
-                        Retrieve Patient ID
-                    </button>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <button
+                            onClick={() => setModalOpen(true)}
+                            className="mt-4 bg-blue-500 text-white rounded p-2 w-full"
+                            type="button"
+                        >
+                            Create
+                        </button>
+                        <button
+                            onClick={handleRetrievePatientId}
+                            className="mt-4 bg-blue-500 text-white rounded p-2 w-full"
+                            type="button"
+                        >
+                            Retrieve
+                        </button>
+                    </div>
                     {isSuccessful === true && (
                         <p className="mt-2 text-black">Patient ID retrieval successful: {patientId}</p>
                     )}
-                    {isSuccessful === false && <p className="mt-2 text-red-500">Error: Patient ID not found.</p>}
+                    {isSuccessful === false && (
+                        <div>
+                            <p className="mt-2 text-red-500">Error: Patient ID not found.</p>
+                            <button
+                                onClick={() => setModalOpen(true)}
+                                className="text-red-500 hover:underline"
+                                type="button"
+                            >
+                                Create new patient?
+                            </button>
+                            <CreatePatientModal
+                                isOpen={isModalOpen}
+                                onClose={() => setModalOpen(false)}
+                                onSave={handleSaveNewPatient}
+                            />
+                        </div>
+                    )}
                 </BlueCard>
                 {isSuccessful ? (
                     <BlueCard ref={secondCardRef}>
@@ -136,7 +328,7 @@ export function PasthistoryPage() {
                             />
                         </div>
 
-                        <p className="text-center text-lg font-semibold mt-2">Patient Name</p>
+                        <p className="text-center text-lg font-semibold mt-2">{patientName}</p>
 
                         <div className="text-left mt-2">
                             <p className="text-gray-600">Patient Details</p>
@@ -154,13 +346,151 @@ export function PasthistoryPage() {
                             <p className="flex text-gray-700 justify-between">
                                 Weight (kg): <span className="font-semibold">{patientWeight}</span>
                             </p>
+                            <p className="flex text-gray-700 justify-between">
+                                Hospital: <span className="font-semibold">{patientHospital}</span>
+                            </p>
                         </div>
+                        <button
+                            className="mt-4 bg-blue-500 text-white rounded p-2 w-full"
+                            type="button"
+                            onClick={openEditableModal}
+                        >
+                            Edit Record
+                        </button>
+                        {/* Modal with editable fields */}
+                        {isEditableModalOpen && (
+                            <Modal
+                                isOpen={isEditableModalOpen}
+                                onClose={closeEditableModal}
+                            >
+                                <h2 className="text-xl font-semibold mb-4">Detailed Patient Information</h2>
+                                <div>
+                                    <div>
+                                        <strong>Name: </strong>
+                                        <input
+                                            type="text"
+                                            value={editedPatientName}
+                                            onChange={(e) => setEditedPatientName(e.target.value)}
+                                            className="border border-gray-300 rounded p-2 w-full"
+                                        />
+                                    </div>
+                                    <div>
+                                        <strong>Age: </strong>
+                                        <input
+                                            type="number"
+                                            value={editedPatientAge}
+                                            onChange={(e) => setEditedPatientAge(e.target.value)}
+                                            className="border border-gray-300 rounded p-2 w-full"
+                                        />
+                                    </div>
+                                    <div>
+                                        <strong>Height (m): </strong>
+                                        <input
+                                            type="number"
+                                            value={editedPatientHeight}
+                                            onChange={(e) => setEditedPatientHeight(e.target.value)}
+                                            className="border border-gray-300 rounded p-2 w-full"
+                                        />
+                                    </div>
+                                    <div>
+                                        <strong>Weight (kg): </strong>
+                                        <input
+                                            type="number"
+                                            value={editedPatientWeight}
+                                            onChange={(e) => setEditedPatientWeight(e.target.value)}
+                                            className="border border-gray-300 rounded p-2 w-full"
+                                        />
+                                    </div>
+                                    <div>
+                                        <strong>Hospital: </strong>
+                                        <input
+                                            type="text"
+                                            value={editedPatientHospital}
+                                            onChange={(e) => setEditedPatientHospital(e.target.value)}
+                                            className="border border-gray-300 rounded p-2 w-full"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                                        <div className="flex items-center space-x-4">
+                                            <strong>Smoking: </strong>
+                                            <input
+                                                type="checkbox"
+                                                checked={editedPatientSmoking}
+                                                onChange={(e) => setEditedPatientSmoking(e.target.checked)}
+                                                className="mt-1 align-middle"
+                                            />
+                                        </div>
+                                        <div className="flex items-center space-x-4">
+                                            <strong>Pregestational LDM: </strong>
+                                            <input
+                                                type="checkbox"
+                                                checked={editedPatientPregestationalLDM}
+                                                onChange={(e) => setEditedPatientPregestationalLDM(e.target.checked)}
+                                                className="mt-1 align-middle"
+                                            />
+                                        </div>
+                                        <div className="flex items-center space-x-4">
+                                            <strong>Gestational LDM: </strong>
+                                            <input
+                                                type="checkbox"
+                                                checked={editedPatientGestationalLDM}
+                                                onChange={(e) => setEditedPatientGestationalLDM(e.target.checked)}
+                                                className="mt-1 align-middle"
+                                            />
+                                        </div>
+                                        <div className="flex items-center space-x-4">
+                                            <strong>Pregnancy Induced Hypertension: </strong>
+                                            <input
+                                                type="checkbox"
+                                                checked={editedPatientPregnancyInducedHypertension}
+                                                onChange={(e) =>
+                                                    setEditedPatientPregnancyInducedHypertension(e.target.checked)
+                                                }
+                                                className="mt-1 align-middle"
+                                            />
+                                        </div>
+                                        <div className="flex items-center space-x-4">
+                                            <strong>High Risk Preeclampsia: </strong>
+                                            <input
+                                                type="checkbox"
+                                                checked={editedPatientHighRiskPreeclampsia}
+                                                onChange={(e) => setEditedPatientHighRiskPreeclampsia(e.target.checked)}
+                                                className="mt-1 align-middle"
+                                            />
+                                        </div>
+                                        <div className="flex items-center space-x-4">
+                                            <strong>Previously Failed Pregnancy: </strong>
+                                            <input
+                                                type="checkbox"
+                                                checked={editedPatientPreviouslyFailedPregnancy}
+                                                onChange={(e) =>
+                                                    setEditedPatientPreviouslyFailedPregnancy(e.target.checked)
+                                                }
+                                                className="mt-1 align-middle"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        className="bg-green-500 text-white rounded-md px-4 py-2 mt-4"
+                                        type="button"
+                                        onClick={updateMotherRecords}
+                                    >
+                                        Save Changes
+                                    </button>
+                                </div>
+                            </Modal>
+                        )}
 
                         <Modal
                             isOpen={isModalOpen}
                             onClose={closeModal}
                         >
                             <h2 className="text-xl font-semibold mb-4">Detailed Patient Information</h2>
+                            <p>
+                                <strong>Name: </strong>
+                                {patientName}
+                            </p>
                             <p>
                                 <strong>Age: </strong>
                                 {patientAge}
@@ -172,6 +502,10 @@ export function PasthistoryPage() {
                             <p>
                                 <strong>Weight (kg): </strong>
                                 {patientWeight}
+                            </p>
+                            <p>
+                                <strong>Hospital: </strong>
+                                {patientHospital}
                             </p>
                             <p>
                                 <strong>Smoking: </strong>
@@ -224,6 +558,9 @@ export function PasthistoryPage() {
                             </p>
                             <p className="flex text-gray-700 justify-between">
                                 Weight (kg): <span className="font-semibold">Unknown</span>
+                            </p>
+                            <p className="flex text-gray-700 justify-between">
+                                Hospital: <span className="font-semibold">Unknown</span>
                             </p>
                         </div>
                     </BlueCard>

@@ -17,7 +17,6 @@ const computeCentile = (ga: number, efw: number, centileData: CentileData[]): nu
         .sort((a, b) => parseFloat(a.split('_')[1]) - parseFloat(b.split('_')[1]));
 
     const ranges = refCentile.map((key) => row[key as keyof CentileData]);
-    console.log('ranges: ', ranges);
 
     for (let i = 0; i < ranges.length - 1; i += 1) {
         if (efw >= ranges[i] && efw <= ranges[i + 1]) {
@@ -26,9 +25,6 @@ const computeCentile = (ga: number, efw: number, centileData: CentileData[]): nu
             const upperCentile = parseFloat(refCentile[i + 1].split('_')[1]);
             const lowerRange = ranges[i];
             const upperRange = ranges[i + 1];
-            console.log('Lower Centile: ', lowerCentile);
-            console.log('Upper Centile: ', upperCentile);
-
             const proportion = (efw - lowerRange) / (upperRange - lowerRange);
             const interpolatedCentile = lowerCentile + proportion * (upperCentile - lowerCentile);
 

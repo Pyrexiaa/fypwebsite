@@ -72,9 +72,7 @@ export function GeneralSettingsContent() {
         <div className="bg-gray-50 p-6 rounded-lg">
             <h2 className="text-2xl font-semibold mb-6 text-center">General Settings</h2>
             <div className="space-y-6">
-                {/* TODO: Dark Mode Integration */}
-                {/* Dark Mode */}
-                <div className="flex items-center justify-between">
+                {/* <div className="flex items-center justify-between">
                     <label
                         htmlFor="toggle-darkmode"
                         className="text-sm font-medium"
@@ -88,13 +86,13 @@ export function GeneralSettingsContent() {
                         offColor="bg-gray-300"
                         label="dark mode"
                     />
-                </div>
+                </div> */}
 
                 {/* Mute Notifications */}
                 <div className="flex items-center justify-between">
                     <label
                         htmlFor="toggle-notifications"
-                        className="text-sm font-medium"
+                        className="text-md"
                     >
                         Notifications
                     </label>
@@ -112,7 +110,7 @@ export function GeneralSettingsContent() {
                 <div className="flex items-center justify-between">
                     <label
                         htmlFor="toggle-cookies"
-                        className="text-sm font-medium"
+                        className="text-md"
                     >
                         Enable Cookies
                     </label>
