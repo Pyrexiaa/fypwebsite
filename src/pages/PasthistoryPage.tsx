@@ -108,7 +108,6 @@ export function PasthistoryPage() {
     };
 
     const [isModalOpen, setModalOpen] = useState(false);
-
     const openModal = () => setModalOpen(true);
     const closeModal = () => setModalOpen(false);
 
@@ -117,6 +116,7 @@ export function PasthistoryPage() {
         // Save the new patient data (e.g., API call or update state)
         try {
             const newPatient = {
+                name: patientData.name,
                 age: Number(patientData.age),
                 height: Number(patientData.height),
                 weight: Number(patientData.weight),
@@ -135,6 +135,10 @@ export function PasthistoryPage() {
             console.log(error);
         }
     };
+
+    const [isCreateNewPatientModalOpen, setCreateNewPatientModalOpen] = useState(false);
+    const openCreateNewPatientModal = () => setCreateNewPatientModalOpen(true);
+    const closeCreateNewPatientModal = () => setCreateNewPatientModalOpen(false);
 
     const [isEditableModalOpen, setIsEditableModalOpen] = useState(false);
     const openEditableModal = () => setIsEditableModalOpen(true);
@@ -268,7 +272,7 @@ export function PasthistoryPage() {
                     />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <button
-                            onClick={() => setModalOpen(true)}
+                            onClick={openCreateNewPatientModal}
                             className="mt-4 bg-blue-500 text-white rounded p-2 w-full"
                             type="button"
                         >
@@ -281,6 +285,11 @@ export function PasthistoryPage() {
                         >
                             Retrieve
                         </button>
+                        <CreatePatientModal
+                            isOpen={isCreateNewPatientModalOpen}
+                            onClose={closeCreateNewPatientModal}
+                            onSave={handleSaveNewPatient}
+                        />
                     </div>
                     {isSuccessful === true && (
                         <p className="mt-2 text-black">Patient ID retrieval successful: {patientId}</p>
@@ -289,15 +298,15 @@ export function PasthistoryPage() {
                         <div>
                             <p className="mt-2 text-red-500">Error: Patient ID not found.</p>
                             <button
-                                onClick={() => setModalOpen(true)}
+                                onClick={openCreateNewPatientModal}
                                 className="text-red-500 hover:underline"
                                 type="button"
                             >
                                 Create new patient?
                             </button>
                             <CreatePatientModal
-                                isOpen={isModalOpen}
-                                onClose={() => setModalOpen(false)}
+                                isOpen={isCreateNewPatientModalOpen}
+                                onClose={closeCreateNewPatientModal}
                                 onSave={handleSaveNewPatient}
                             />
                         </div>

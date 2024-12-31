@@ -11,6 +11,7 @@ import { CalculatorPage } from './pages/CalculatorPage';
 import { AimodelPage } from './pages/AimodelPage';
 import { PasthistoryPage } from './pages/PasthistoryPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { DatabasePage } from './pages/DatabasePage';
 
 export function App() {
     const [user] = useAuthState(auth);
@@ -59,6 +60,10 @@ export function App() {
                     <Route
                         path="pasthistory"
                         element={<PasthistoryPage />}
+                    />
+                    <Route
+                        path="database"
+                        element={<DatabasePage />}
                     />
                     <Route
                         path="/settings"

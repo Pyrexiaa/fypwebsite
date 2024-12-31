@@ -98,7 +98,7 @@ export function PastHistoryContentTable({ data }: PastHistoryContentTableProps) 
     const preprocessed = preprocessData(data);
 
     if (!preprocessed || preprocessed.transformedData.length === 0) {
-        return <div className="flex justify-center items-center h-full w-full text-xl">No data available</div>;
+        return <div className="flex justify-center items-center h-full w-full text-xl p-4">No data available</div>;
     }
 
     const { transformedData, columnTitles } = preprocessed;

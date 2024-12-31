@@ -52,7 +52,7 @@ export function PastHistoryContent({ data, height }: PastHistoryContentProps) {
             {/* Header Section */}
             <div className="flex justify-between items-center mb-4">
                 {/* Title */}
-                <h2 className="text-lg font-semibold">Patient Records</h2>
+                <h2 className="text-lg font-semibold">Patient Scan Records</h2>
 
                 {/* Button and Icons */}
                 <div className="flex items-center space-x-2">

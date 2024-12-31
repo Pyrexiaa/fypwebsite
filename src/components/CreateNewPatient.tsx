@@ -31,6 +31,7 @@ export function CreatePatientModal({ isOpen, onClose, onSave }: CreatePatientMod
     };
 
     const handleSubmit = () => {
+        console.log('Form Data: ', formData);
         onSave(formData);
         onClose();
     };

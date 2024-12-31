@@ -52,6 +52,14 @@ export function Sidebar({ isExpanded }: SidebarProps) {
                     >
                         Past History Retrieval
                     </Link>
+                    <Link
+                        to="/database"
+                        className={`p-2 ${
+                            location.pathname === '/database' ? 'bg-blue-500' : 'hover:bg-gray-600'
+                        } rounded text-center`}
+                    >
+                        Database
+                    </Link>
                 </nav>
             </div>
         </aside>

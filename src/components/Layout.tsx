@@ -18,6 +18,7 @@ export function Layout() {
         '/aimodel': 'AI Model: Trimester-Based Fetal Health Prediction & Assessment',
         '/pasthistory': 'Past History Retrieval',
         '/calculator': 'Fetal Growth Calculator',
+        '/database': 'Database',
         '/settings': 'Settings',
     };
 
