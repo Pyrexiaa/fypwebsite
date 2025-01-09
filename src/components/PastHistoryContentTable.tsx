@@ -140,7 +140,7 @@ export function PastHistoryContentTable({ data }: PastHistoryContentTableProps) 
                                 </td>
                             ))}
                         <td className="px-4 py-2 align-top">
-                            {item.sga === '0' ? (
+                            {Number(item.sga) === 0 ? (
                                 <div className="bg-green-500 rounded-md text-center">AGA</div>
                             ) : (
                                 <div className="bg-red-500 rounded-md text-center">SGA</div>
