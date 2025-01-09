@@ -17,7 +17,6 @@ interface AIModelContentProps {
 const checkMotherExists = async (motherId: string) => {
     try {
         const response = await axios.get(`${getSingleMotherURL}/${motherId}`);
-        console.log('Mother details: ', response.data);
         return true;
     } catch (error) {
         console.log('Error occured while checking mother exists: ', error);
@@ -148,6 +147,20 @@ export function AIModelContent({
                 setErrorOccurred(true);
                 return;
             }
+
+            const predefinedKeys = [
+                'EssentialHypertension',
+                'GestationalDiabetes',
+                'PregestationalDiabetes',
+                'PregnancyInducedHypertension',
+                'Smoking',
+            ];
+
+            Object.keys(formData).forEach((key) => {
+                if (predefinedKeys.includes(key) && formData[key] === '') {
+                    formData[key] = 0; // assign 0 if the value is an empty string
+                }
+            });
 
             console.log('Finalized: ', formData);
 

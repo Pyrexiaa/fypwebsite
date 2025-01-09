@@ -16,6 +16,7 @@ export function AimodelPage() {
 
     const [patientId, setPatientId] = useState('');
     const [isSuccessful, setIsSuccessful] = useState<boolean | null>(null);
+    const [patientName, setPatientName] = useState('');
     const [patientAge, setPatientAge] = useState('');
     const [patientHeight, setPatientHeight] = useState('');
     const [patientWeight, setPatientWeight] = useState('');
@@ -42,7 +43,7 @@ export function AimodelPage() {
     const handleRetrievePatientId = async (inputPatientID: string) => {
         try {
             const response = await axios.get(`${getSingleMotherURL}/${inputPatientID}`);
-            console.log('Response: ', response.data);
+            setPatientName(response.data.name);
             setPatientAge(response.data.age);
             setPatientHeight(response.data.height);
             setPatientWeight(response.data.weight);
@@ -56,7 +57,6 @@ export function AimodelPage() {
             setIsSuccessful(true);
         } catch (error) {
             setIsSuccessful(false);
-            console.log(error);
         }
     };
 
@@ -70,10 +70,10 @@ export function AimodelPage() {
     const [isSGA, setIsSGA] = useState(true);
 
     const handleSaveNewPatient = async (patientData: Record<string, any>) => {
-        console.log('New Patient Data:', patientData);
         // Save the new patient data (e.g., API call or update state)
         try {
             const newPatient = {
+                name: patientData.name,
                 age: Number(patientData.age),
                 height: Number(patientData.height),
                 weight: Number(patientData.weight),
@@ -85,9 +85,7 @@ export function AimodelPage() {
                 GestationalLDM: patientData.gestationalLDM,
                 Smoking: patientData.doesSmoke,
             };
-            console.log(newPatient);
             const response = await axios.post(postNewMotherURL, newPatient);
-            console.log(response);
         } catch (error) {
             console.log(error);
         }
@@ -228,6 +226,8 @@ export function AimodelPage() {
                                     className="w-24 h-24 rounded-full object-cover"
                                 />
                             </div>
+
+                            <p className="text-center text-lg font-semibold mt-2">{patientName}</p>
 
                             <div className="text-left mt-2">
                                 <p className="text-gray-600">Patient Details</p>

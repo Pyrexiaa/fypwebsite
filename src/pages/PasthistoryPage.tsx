@@ -85,7 +85,6 @@ export function PasthistoryPage() {
             setEditedPatientPreviouslyFailedPregnancy(response.data.PreviouslyFailedPregnancy);
             setIsSuccessful(true);
         } catch (error) {
-            console.log('Response error: ', error);
             setIsSuccessful(false);
         }
     };
@@ -93,11 +92,9 @@ export function PasthistoryPage() {
     const retrieveScansDetails = async (id: string) => {
         try {
             const response = await axios.get(`${getAllRelatedScansURL}/${id}`);
-            console.log('Patient Scan: ', response.data);
             setPatientPastScans(response.data);
             setIsRetrieveScanSuccessful(true);
         } catch (error) {
-            console.log('Response error: ', error);
             setIsRetrieveScanSuccessful(false);
         }
     };
@@ -112,7 +109,6 @@ export function PasthistoryPage() {
     const closeModal = () => setModalOpen(false);
 
     const handleSaveNewPatient = async (patientData: Record<string, any>) => {
-        console.log('New Patient Data:', patientData);
         // Save the new patient data (e.g., API call or update state)
         try {
             const newPatient = {
@@ -128,9 +124,7 @@ export function PasthistoryPage() {
                 GestationalLDM: patientData.gestationalLDM,
                 Smoking: patientData.doesSmoke,
             };
-            console.log(newPatient);
             const response = await axios.post(postNewMotherURL, newPatient);
-            console.log(response);
         } catch (error) {
             console.log(error);
         }
@@ -243,7 +237,7 @@ export function PasthistoryPage() {
                     updatedRecords.map((record) => axios.patch(updateMotherURL, record)),
                 );
                 // Log all responses
-                responses.forEach((response) => console.log(response));
+                // responses.forEach((response) => console.log(response));
             } else {
                 console.log('No changes detected.');
             }
