@@ -210,7 +210,7 @@ export function AIModelContent({
                 umb_api: Number(response.data['UmbilicalArterialPulsatilityIndex']),
                 placenta_site: response.data['PlacentaSite'],
                 af: response.data['AmnioticFluid'],
-                sga: predictionResponse.data,
+                sga: predictionResponse,
             };
 
             const scansResponse = await axios.post(`${postNewScanURL}`, scans);
