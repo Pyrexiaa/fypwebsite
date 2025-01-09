@@ -158,7 +158,11 @@ export function AIModelContent({
 
             Object.keys(formData).forEach((key) => {
                 if (predefinedKeys.includes(key) && formData[key] === '') {
-                    formData[key] = 0; // assign 0 if the value is an empty string
+                    formData[key] = 0;
+                } else if (predefinedKeys.includes(key) && formData[key] === 'false') {
+                    formData[key] = 0;
+                } else if (predefinedKeys.includes(key) && formData[key] === 'true') {
+                    formData[key] = 1;
                 }
             });
 
