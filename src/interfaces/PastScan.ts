@@ -16,4 +16,5 @@ export interface PastScans {
     umb_api: number;
     ute_api: number;
     ute_ari: number;
+    sga: number;
 }
